@@ -1,135 +1,138 @@
 #ifndef DICCNAT_H_
 #define	DICCNAT_H_
 
-#include <ostream>
-#include "Lista.h"
-using namespace std;
+#include <iostream>
+#include "Tipos.h"
+#include "aed2/Lista.h"
+
 
 namespace aed2
 {
 
-template<class K,class S>
-class Dicc
+template<typename S>
+class DiccNat
 {
   public:
 
 
-    Dicc();
-    Dicc(const Dicc<K,S>& otro);
-    Dicc<K,S>& operator=(const Dicc<K,S>& otro);
-    void Definir(const K& clave, const S& significado);
-    void DefinirRapido(const K& clave, const S& significado);
-    bool Definido(const K& clave) const;
-    S& Significado(const K& clave);
-    void Borrar(const K& clave);
-    ostream& mostrarDicc(ostream&) const;
+	DiccNat();
+	//DiccNat(const DiccNat& otro);
+	//DiccNat& operator=(const DiccNat& otro);
+    void Definir(const Nat& clave, const S& significado);
+    //void DefinirRapido(const Nat& clave, const S& significado);
+    bool Definido(const Nat& clave) const;
+    S Significado(const Nat& clave);
+    void Borrar(const Nat& clave);
+    Lista<Nat>& Claves();
+    std::ostream& mostrarDicc(std::ostream&) const;
 
 
   private:
 
     struct Nodo
       {
-        Nodo(const K& c, S& s) : clave(c), significado(s), izquierda(NULL), derecha(NULL) {};
 
-        K clave;
+        Nat clave;
         S significado;
         Nodo* izquierda;
         Nodo* derecha;
+        Lista<Nat>::Iterador puntero;
+        Nodo(const Nat& c,const S& s,const Lista<Nat>::Iterador p) :
+        	clave(c), significado(s), izquierda(NULL), derecha(NULL), puntero(p) {};
 
      };
 
+
+
     Nodo* primero;
+    Lista<Nat> claves;
+
 
 };
 
-template<class K, class S>
-std::ostream& operator << (std::ostream &os, const Dicc<K,S>& d)
+
+template<typename S>
+std::ostream& operator << (std::ostream &os, const DiccNat<S>& d)
 {
 	return d.mostrarDicc(os);
-}
-
-template<class K, class S>
-bool operator == (const Dicc<K,S>& d1, const Dicc<K,S>& d2);
+};
 
 
-template<class K, class S>
-Dicc<K,S>::Dicc()
+template<typename S>
+DiccNat<S>::DiccNat()
 {
 	this->primero=NULL;
+	this->claves=Lista<Nat>::Lista();
 }
 
-template<class K, class S>
-Dicc<K,S>::Dicc(const Dicc<K,S>& otro)
+
+
+/*
+template<typename S>
+bool operator ==(const aed2::DiccNat<S>& d1, const aed2::DiccNat<S>& d2);
+
+template<typename S>
+DiccNat<S>::DiccNat(const DiccNat<S>& otro)
 {
 	if(otro.primero==NULL){
 
 			this->primero=NULL;
 
 	}
-}
+};
 
 
-template<class K, class S>
-Dicc<K,S>& Dicc<K,S>::operator = (const Dicc<K,S>& otro)
+template<typename S>
+DiccNat<S>& DiccNat<S>::operator = (const DiccNat<S>& otro)
 {
   primero = otro.primero;
 
   return *this;
 }
+*/
 
-
-template<class K, class S>
-void Dicc<K,S>::Definir(const K& clave, const S& significado)
+template<typename S>
+void DiccNat<S>::Definir(const Nat& clave, const S& significado)
 {
+		Lista<Nat>::Iterador puntero;
+		puntero= claves.Lista<Nat>::AgregarAtras(clave);
+		Nodo* n = new Nodo(clave, significado, puntero);
 
-	if(this->Definido(clave)){
-		this->DefinirRapido(clave, significado);
-	}
-
-}
-
-
-template<class K, class S>
-void Dicc<K,S>::DefinirRapido(const K& clave, const S& significado)
-{
-	struct Nodo* n = new Nodo(clave, significado);
 		if(this->primero==NULL){
 			this->primero=n;
-		}
-		bool fin = true;
-		Nodo* actual = primero;
+		}else{
+			bool fin = true;
+			Nodo* actual = this->primero;
 
-		while(fin){
+			while(fin){
 
-			if(this->primero.clave>clave){
+				if(actual->clave>clave){
 
-				actual=this->primero.izquierda;
+					if(actual->izquierda == NULL){
+						actual->izquierda=n;
+						fin=false;
+					}
+					actual=actual->izquierda;
+				} else {
 
-				if(actual == NULL){
-					this->primero.izquierda=n;
-					fin=false;
+					if(actual->derecha == NULL){
+						actual->derecha=n;
+						fin=false;
+					}
+					actual=actual->derecha;
 				}
 
-			} else {
-
-				actual=this->primero.derecha;
-
-				if(actual == NULL){
-					this->primero.derecha=n;
-					fin=false;
-				}
 			}
-
 		}
 }
 
 
-template<class K, class S>
-bool Dicc<K,S>::Definido(const K& clave) const
+template<typename S>
+bool DiccNat<S>::Definido(const Nat& clave) const
 {
 	bool fin = true;
 	bool res = false;
-	Nodo* actual = primero;
+	Nodo* actual = this->primero;
 
 	while(fin){
 
@@ -158,11 +161,11 @@ bool Dicc<K,S>::Definido(const K& clave) const
 }
 
 
-template<class K, class S>
-S& Dicc<K,S>::Significado(const K& clave)
+template<typename S>
+S DiccNat<S>::Significado(const Nat& clave)
 {
 	bool fin = true;
-	S& res;
+	S res;
 	Nodo* actual = primero;
 
 	while(fin){
@@ -181,17 +184,90 @@ S& Dicc<K,S>::Significado(const K& clave)
 		}
 
 	return res;
-}
+};
 
-template<class K, class S>
-void Dicc<K,S>::Borrar(const K& clave)
+template<typename S>
+void DiccNat<S>::Borrar(const Nat& clave)
 {
 
-}
+	Nodo* padre = NULL; /* (1) */
+	Nodo* actual;
+	Nodo* nodo;
+	Nat auxC;
+	S auxS;
+	Lista<Nat>::Iterador auxP;
+
+   actual = this->primero;
+
+   while(actual!=NULL) { /* Búsqueda (2) else implícito */
+	  if(clave == actual->clave) { /* (3) */
+		 if(actual->izquierda==NULL && actual->derecha==NULL) { /* (3-a) */
+			   if(padre){
+				   if(padre->derecha == actual) padre->derecha = NULL;  /* (3-a-ii) */
+				   else if(padre->izquierda == actual) padre->izquierda = NULL; /* (3-a-iii) */
+			   }
+			   if(padre==NULL && actual->clave==this->primero->clave){
+				   this->primero=NULL;
+			   }
+		   Lista<Nat>::Iterador it=actual->puntero;
+		   it.Lista<Nat>::Iterador::EliminarSiguiente();
+		   delete actual; /* (3-a-iv) */
+		   actual = NULL;
+
+		   return;
+	 }
+		 else { /* (3-b) */
+			/* Buscar nodo */
+			padre = actual; /* (3-b-i) */
+			if(actual->derecha) {
+			   nodo = actual->derecha;
+			   while(nodo->izquierda) {
+				  padre = nodo;
+				  nodo = nodo->izquierda;
+			   }
+			}
+			else {
+			   nodo = actual->izquierda;
+			   while(nodo->derecha) {
+				  padre = nodo;
+				  nodo = nodo->derecha;
+			   }
+			}
+			/* Intercambio */
+			auxC = actual->clave; /* (3-b-ii) */
+			actual->clave = nodo->clave;
+			nodo->clave = auxC;
+
+			auxS = actual->significado; /* (3-b-ii) */
+			actual->significado = nodo->significado;
+			nodo->significado = auxS;
+
+			auxP = actual->puntero; /* (3-b-ii) */
+			actual->puntero = nodo->puntero;
+			nodo->puntero = auxP;
+
+			actual = nodo;
+		 }
+	  }
+	  else {
+		 padre = actual;
+		 if(clave > actual->clave) actual = actual->derecha; /* (4) */
+		 else if(clave < actual->clave) actual = actual->izquierda; /* (5) */
+	  }
+   }
 
 
-template<class K, class S>
-ostream& Dicc<K,S>::mostrarDicc(ostream& d) const
+};
+
+template<typename S>
+Lista<Nat>& DiccNat<S>::Claves()
+{
+	return this->claves;
+};
+
+
+template<typename S>
+std::ostream& DiccNat<S>::mostrarDicc(std::ostream& d) const
 {
 
 	if(this->primero==NULL){
@@ -203,19 +279,70 @@ ostream& Dicc<K,S>::mostrarDicc(ostream& d) const
 			struct Nodo* actual=this->primero;
 			d << "[" ;
 
+			d << actual->clave;
+			d << ", ";
 
-			d << this->primero.clave;
-
-			if(this->primero.izquierdo != NULL){
-				d << this->primero.izquierdo.clave;
+			if(actual->izquierda != NULL){
+				d << "Izq: ";
+				d << actual->izquierda->clave;
+				d << ", ";
 			}
 
-			if(this->primero.derecho != NULL){
-				d << this->primero.derecho.clave;
+
+			if(actual->derecha != NULL){
+				d << "Der: ";
+				d << actual->derecha->clave;
 			}
 
 
-			d << "]" << endl;
+			d << "]" << std::endl;
+
+
+			if(this->primero->izquierda != NULL){
+				actual=this->primero->izquierda;
+				d << "[" ;
+
+				d << actual->clave;
+				d << ", ";
+
+				if(actual->izquierda != NULL){
+					d << "Izq: ";
+					d << actual->izquierda->clave;
+					d << ", ";
+				}
+
+
+				if(actual->derecha != NULL){
+					d << "Der: ";
+					d << actual->derecha->clave;
+				}
+
+
+			d << "]" << std::endl;
+			}
+
+			if(this->primero->derecha != NULL){
+				actual=this->primero->derecha;
+				d << "[" ;
+
+				d << actual->clave;
+				d << ", ";
+
+				if(actual->izquierda != NULL){
+					d << "Izq: ";
+					d << actual->izquierda->clave;
+					d << ", ";
+				}
+
+
+				if(actual->derecha != NULL){
+					d << "Der: ";
+					d << actual->derecha->clave;
+				}
+
+
+				d << "]" << std::endl;
+			}
 		}
 
 		return d;
@@ -224,7 +351,8 @@ ostream& Dicc<K,S>::mostrarDicc(ostream& d) const
 
 
 
-}
+
+};
 
 
 #endif // DICCNAT_H_
