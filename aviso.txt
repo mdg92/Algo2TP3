@@ -1,0 +1,3 @@
+recuerden en tabla cambiar los
+
+Tabla::Registro, por Registro solamente. agregando el <Registro.h>
