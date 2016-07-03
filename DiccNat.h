@@ -16,6 +16,7 @@ class DiccNat
 
 
 	DiccNat();
+	~DiccNat();
 	//DiccNat(const DiccNat& otro);
 	//DiccNat& operator=(const DiccNat& otro);
     void Definir(const Nat& clave, const S& significado);
@@ -24,6 +25,8 @@ class DiccNat
     S Significado(const Nat& clave);
     void Borrar(const Nat& clave);
     Lista<Nat>& Claves();
+    Nat Maximo();
+    Nat Minimo();
     std::ostream& mostrarDicc(std::ostream&) const;
 
 
@@ -39,6 +42,7 @@ class DiccNat
         Lista<Nat>::Iterador puntero;
         Nodo(const Nat& c,const S& s,const Lista<Nat>::Iterador p) :
         	clave(c), significado(s), izquierda(NULL), derecha(NULL), puntero(p) {};
+        void BorrarNodo();
 
      };
 
@@ -57,6 +61,22 @@ std::ostream& operator << (std::ostream &os, const DiccNat<S>& d)
 	return d.mostrarDicc(os);
 };
 
+template<typename S>
+void DiccNat<S>::Nodo::BorrarNodo()
+{
+	if(this->izquierda!=NULL)
+	{
+		this->izquierda->BorrarNodo();
+	}
+
+	if(this->derecha!=NULL)
+		{
+			this->derecha->BorrarNodo();
+		}
+
+	delete this;
+};
+
 
 template<typename S>
 DiccNat<S>::DiccNat()
@@ -65,7 +85,18 @@ DiccNat<S>::DiccNat()
 	this->claves=Lista<Nat>::Lista();
 }
 
-
+template<typename S>
+DiccNat<S>::~DiccNat()
+{
+	Nodo* p = this->primero;
+	if(p!=NULL)
+	{
+		p->BorrarNodo();
+	}
+	while(!this->claves.EsVacia()) {
+		this->claves.Fin();
+	  }
+}
 
 /*
 template<typename S>
@@ -265,6 +296,30 @@ Lista<Nat>& DiccNat<S>::Claves()
 	return this->claves;
 };
 
+
+template<typename S>
+Nat DiccNat<S>::Maximo()
+{
+	Nodo* actual=this->primero;
+
+	while(actual->derecha!=NULL)
+	{
+		actual=actual->derecha;
+	}
+	return actual->clave;
+};
+
+template<typename S>
+Nat DiccNat<S>::Minimo()
+{
+	Nodo* actual=this->primero;
+
+	while(actual->izquierda!=NULL)
+	{
+		actual=actual->izquierda;
+	}
+	return actual->clave;
+};
 
 template<typename S>
 std::ostream& DiccNat<S>::mostrarDicc(std::ostream& d) const
