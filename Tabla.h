@@ -6,6 +6,7 @@
 #include "aed2/Dicc.h"
 #include "aed2/Conj.h"
 #include "aed2/TiposBasicos.h"
+#include "Registro.h"
 
 namespace aed2
 {
@@ -51,10 +52,10 @@ class Tabla
 //        aed2::String str_;
 //    };
 
+	const NombreTabla& nombre()const;
     /**
      * Esta clase representa un registro, es decir, un mapeo de nombres de columna a valores.
      */
-    typedef aed2::Dicc<NombreCampo, Dato> Registro;
 
     typedef aed2::Conj<aed2::Conj<Registro >::Iterador > CjDeIteradores;
 
@@ -74,18 +75,18 @@ class Tabla
     const aed2::Conj<NombreCampo > indices() const;
 
 
-    aed2::Conj<NombreCampo> campos(const NombreTabla& tabla) const;
+    Conj<const NombreCampo&> campos()const;
 
-    aed2::TipoCampo tipoCampo(const NombreTabla& tabla) const;
+    const Tipo& tipoCampo(const NombreCampo& c) const;
 
     /**
      * Devuelve el conjunto de registros de la tabla.
      *
      * PRE:.
      */
-    aed2::Conj<Registro > registros() const;
+    Conj<Registro> registros()const;
 
-    aed2::Nat cantidadDeAccesos(const NombreTabla& tabla) const;
+    const Nat& cantidadDeAccesos(const NombreTabla& tabla) const;
 
     void agregarRegistro(const Registro& reg);
 
@@ -98,12 +99,6 @@ class Tabla
      */
     ~Tabla();
 
-    /**
-     * Inserta un registro en tabla.
-     *
-     * PRE: idem especificación TAD Driver :: insertarEntrada
-     */
-    void insertarRegistro(const NombreTabla& tabla, const  Registro& registro);
 
     /**
      * Borra una serie de registros de  tabla.
@@ -113,10 +108,10 @@ class Tabla
      *  - 'columna' es una columna de dicha tabla.
      *  - el tipo de 'valor' coincide con el tipo de dicha columna.
      */
-    void borrarRegistro(const NombreTabla& tabla, const NombreCampo& columna, const Dato& valor);
+    void borrarRegistro(const Registro& registro_);
 
 
-    void indexar(const NombreTabla& tabla) const;
+    void indexar(const NombreCampo& c);
 
     aed2::Nat cantidadDeAccesosDeTabla(const NombreTabla& tabla) const;
 
@@ -129,7 +124,7 @@ class Tabla
      *  - .
      *  - idem especificación TAD Tabla :: minimo
      */
-    Dato minimo(const NombreTabla& tabla, const NombreCampo& columna) const;
+    const Dato& minimo(const NombreCampo& columna) const;
 
     /**
      * Devuelve el maximo valor de una columna de la tabla.
@@ -138,83 +133,28 @@ class Tabla
      *  -.
      *  - idem especificación TAD Tabla :: maximo
      */
-    Dato maximo(const NombreTabla& tabla, const NombreCampo& columna) const;
+    const Dato& maximo(const NombreCampo& columna) const;
+
+    const bool puedoInsertar(const Registro& r)const;
+
+    const bool puedoIndexar(const NombreCampo& c)const;
+
+    const bool hayCoincidencia(const Registro& reg, const Conj<NombreCampo > cjcampo, const Conj<Registro& > cjreg)const;
+
+   Conj<Conj<Registro >::Iterador > coincidencias(const Registro& crit, const Conj<Registro >);
+
+    Conj<Registro& > combinarRegistros(const NombreCampo& campo, const Conj<Registro& > cr1, const Conj<Registro& > cr2);
 
 
-  // Indices
+    const bool mismosTipos(const Registro& reg)const;
 
-    /**
-     * Indica si una tabla tiene índice definido sobre un campo de tipo Nat.
-     *
-     * PRE:.
-     */
-    bool tieneIndiceNat(const NombreTabla& tabla) const;
-
-    /**
-     * Indica si una tabla tiene índice definido sobre un campo de tipo String.
-     *
-     * PRE: .
-     */
-    bool tieneIndiceString(const NombreTabla& tabla) const;
-
-    /**
-     * Devuelve el campo sobre el cuál está definido el índice de tipo Nat.
-     *
-     * PRE:
-     *  - .
-     *  - existe un índice de tipo Nat en dicha tabla.
-     */
-    const NombreCampo& campoIndiceNat(const NombreTabla& tabla) const;
-
-    /**
-     * Devuelve el campo sobre el cuál está definido el índice de tipo String.
-     *
-     * PRE:
-     *  - '.
-     *  - existe un índice de tipo String en dicha tabla.
-     */
-    const NombreCampo& campoIndiceString(const NombreTabla& tabla) const;
-
-    /**
-     * Crea un índicede tipo Nat sobre un campo de la tabla.
-     *
-     * PRE:
-     *  - .
-     *  - no existe un índice de tipo Nat en dicha tabla.
-     *  - 'campo' pertenece a las columnas de dicha tabla, y la columna es de tipo Nat.
-     */
-    void crearIndiceNat(const NombreTabla& tabla, const NombreCampo& campo);
-
-    /**
-     * Crea un índicede tipo String sobre un campo de la tabla.
-     *
-     * PRE:
-     *  - .
-     *  - no existe un índice de tipo String en dicha tabla.
-     *  - 'campo' pertenece a las columnas de dicha tabla, y la columna es de tipo String.
-     */
-    void crearIndiceString(const NombreTabla& tabla, const NombreCampo& campo);
-
-  // Joins
-
-    /**
-     * Indica si existe un join entre 'tabla1' y 'tabla2'.
-     */
-    bool hayJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const;
-
-    /**
-     * Devuelve el campo sobre el cuál se hace el join entre dos tablas.
-     *
-     * PRE: existe un Join entre las tablas 'tabla1' y 'tabla2'.
-     */
-    const NombreCampo& campoJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const;
-
+    Conj<Conj<Registro >::Iterador > buscarEnTabla(const Registro& criterio)const;
 
   private:
 	NombreTabla Nombre_;
-	aed2::Conj<Registro > Registros_;
-	aed2::Dicc<const NombreCampo&, aed2::Tipo > Campos_;//String
-	aed2::Conj<NombreCampo > Claves_;
+	Conj<Registro > Registros_;
+	Dicc<const NombreCampo&, Tipo > Campos_;//String
+	Conj<NombreCampo > Claves_;
 	struct IndiceNat{
 		   NombreCampo CampoI;
 		   bool EnUso;

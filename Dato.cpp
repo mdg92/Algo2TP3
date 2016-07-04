@@ -7,6 +7,16 @@
 
 namespace aed2{
 
+Dato::Dato(const Dato& a){
+	this->tipo_=a.tipo();
+	if(a.tipo()){
+		this->valorNat_=a.valorNat();
+	}else{
+		this->valorString_=a.valorString();
+	}
+};
+
+
 Dato::Dato(const String& y):tipo_(false),valorString_(y)
 {};
 

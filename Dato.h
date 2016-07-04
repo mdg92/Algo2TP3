@@ -15,6 +15,7 @@ class Dato{
 public:
 	Dato(const String& x);
 	Dato(const Nat& x);
+	Dato(const Dato& a);
 	~Dato();
 	const Tipo tipo()const;
 	const Nat& valorNat()const;
