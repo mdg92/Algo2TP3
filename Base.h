@@ -5,6 +5,7 @@
 #include "Tipos.h"
 #include "Tabla.h"
 #include "DiccNat.h"
+#include "aed2/Lista.h"
 #include "aed2/Dicc.h"
 #include "aed2/Conj.h"
 #include "aed2/TiposBasicos.h"
@@ -16,7 +17,7 @@ class Base
 {
 	public:
 
-	typedef aed2::Dicc<NombreCampo, Dato> Registro;
+	typedef aed2::Dicc/*String*/<NombreCampo, Dato> Registro;
 
 
 
@@ -24,13 +25,13 @@ class Base
 
 	Conj<NombreTabla>::Iterador DameTablas();
 
-	Tabla DameTabla(const NombreTabla);
+	Tabla& DameTabla(const NombreTabla);
 
 	bool HayJoin(const NombreTabla, const NombreTabla);
 
 	NombreCampo CampoJoin(const NombreTabla, const NombreTabla);
 
-	void AgregarTabla(const Tabla);
+	void AgregarTabla(const Tabla&);
 
 	void InsertarEntrada(const Registro, const NombreTabla);
 
@@ -108,7 +109,7 @@ Conj<NombreTabla>::Iterador Base::DameTablas()
 	//return this->Tablas.Claves();
 };
 
-Tabla Base::DameTabla(const NombreTabla t)
+Tabla& Base::DameTabla(const NombreTabla t)
 {
 	return this->Tablas.Significado(t).TActual;
 };
@@ -124,7 +125,7 @@ NombreCampo Base::CampoJoin(const NombreTabla t1, const NombreTabla t2)
 	return InfoJ->CampoJ;
 };
 
-void Base::AgregarTabla(const Tabla t)
+void Base::AgregarTabla(const Tabla& t)
 {
 	InfoTabla it = InfoTabla(t);
 	this->Tablas.Definir(t.Nombre_, it);
@@ -144,9 +145,9 @@ void Base::InsertarEntrada(const Registro r, const NombreTabla t)
 
 		while(NomTab.HaySiguiente()){
 
-			InfoJoin InfoJ = InfoT->Joins.Significado(NomTab.Siguiente());
+			InfoJoin* InfoJ = InfoT->Joins.Significado(NomTab.Siguiente());
 			DatoCambio DatoC = DatoCambio(r, t, true);
-			InfoJ.Rcambios.AgregarAtras(DatoC);
+			InfoJ->Rcambios.AgregarAtras(DatoC);
 			NomTab.Avanzar();
 
 		}
@@ -322,9 +323,80 @@ Conj<Base::Registro> Base::Registros(const NombreTabla t)
 	return this->Tablas.Significado(t).TActual.Registros_;
 };
 
-Conj<Base::Registro> Base::VistaJoin(const NombreTabla, const NombreTabla)
+Conj<Base::Registro> Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 {
-	//Hacer...
+	InfoTabla* InfoT1 = this->Tablas.Significado(t1);
+	Tabla* Ta1 = InfoT1->TActual;
+
+	InfoTabla* InfoT2 = this->Tablas.Significado(t2);
+	Tabla* Ta2 = InfoT2->TActual;
+
+	InfoJoin* InfoJ = InfoT1->Joins.Significado(t2);
+
+	NombreCampo c = InfoJ->CampoJ;
+
+	if(InfoJ->Rcambios.EsVacia())
+	{
+		while(!InfoJ->Rcambios.EsVacia())
+		{
+			DatoCambio data = InfoJ->Rcambios.Primero();
+			InfoJ->Rcambios.Fin();
+			Registro r = data.Reg;
+
+			Nat keyN;
+			String keyS;
+
+			if(InfoJ->CampoT)
+			{
+				keyN = r.Significado(c);
+			}else{
+				keyS = r.Significado(c);
+			}
+
+			if(data.Accion)
+			{
+				NombreTabla NomTOrigen = data.NomOrigen;
+				Dicc<NombreCampo, Dato> regModelo = Dicc<NombreCampo, Dato>();
+				regModelo.Definir(c, r.Significado(c));
+
+				Registro ROtro = Dicc/*String*/<NombreCampo, Dato>();
+
+				if(NomTOrigen==t1)
+				{
+					ROtro = Ta2->buscarEnTabla(regModelo).CrearIt().Siguiente().Siguiente();
+				}else{
+					ROtro = Ta1->buscarEnTabla(regModelo).CrearIt().Siguiente().Siguiente();
+				}
+
+				if(ROtro.CantClaves()!=0){
+					Registro RNuevo = UnirRegistros(r, ROtro);
+
+					if(InfoJ->CampoT)
+					{
+						Conj<Registro>::Iterador itnew = InfoJ->JoinC.AgregarRapido(RNuevo);
+						InfoJ->JoinN.Definir(keyN,itnew);
+					}else{
+						Conj<Registro>::Iterador itnew = InfoJ->JoinC.AgregarRapido(RNuevo);
+						InfoJ->JoinS.Definir(keyS,itnew);
+					}
+				}
+			}else{
+
+				if(InfoJ->CampoT)
+				{
+					Conj<Registro>::Iterador itcjr = InfoJ->JoinN.Significado(keyN);
+					InfoJ->JoinN.Borrar(keyN);
+					itcjr.EliminarSiguiente();
+				}else{
+					Conj<Registro>::Iterador itcjr = InfoJ->JoinS.Significado(keyS);
+					InfoJ->JoinS.Borrar(keyS);
+					itcjr.EliminarSiguiente();
+				}
+			}
+		}
+	}
+
+	return InfoJ->JoinC;
 };
 
 int Base::CantidadDeAccesos(const NombreTabla t) const
