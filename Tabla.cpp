@@ -103,7 +103,7 @@ void Tabla::agregarRegistro(const Registro& registro_){
 				IndiceDN.Definir(valorN, cjn);
 			}
 			a.N=itcjn;
-			if(TipoRelacion){ //caso nat
+			if(TipoRelacion){ //caso
 				ConsultaN.Definir(reg.Significado(CampoR).valorNat(), a);
 			}else{ //caso string
 				ConsultaS.Definir(reg.Significado(CampoR).valorString(), a);
@@ -136,7 +136,7 @@ void Tabla::agregarRegistro(const Registro& registro_){
 					IndiceDS.Definir(valorS, cjs);
 				}
 				a.S=itcjs;
-				if(TipoRelacion){ //caso nat
+				if(TipoRelacion){ //caso
 					ConsultaN.Definir(reg.Significado(CampoR).valorNat(), a);
 				}else{ //caso string
 					ConsultaS.Definir(reg.Significado(CampoR).valorString(), a);
@@ -399,7 +399,7 @@ const NombreTabla& Tabla::nombre()const{
 	return this->Nombre_;
 };
 
-const Nat& Tabla::cantidadDeAccesos(const NombreTabla& tabla) const{
+const Nat& Tabla::cantidadDeAccesos() const{
 	return this->cantAccesos;
 };
 
@@ -431,7 +431,7 @@ const Dato& Tabla::maximo(const NombreCampo& campo)const{
 		}
 }
 
-const bool Tabla::puedoIndexar(const NombreCampo& c)const{
+const bool Tabla::puedeIndexar(const NombreCampo& c)const{
 	if(this->tipoCampo(c)){
 		return !IndiceN.EnUso;
 	}else{
@@ -463,7 +463,7 @@ Conj<Registro& > combinarRegistros(const NombreCampo& campo, const Conj<Registro
 		Tipo rac=rtemp.Significado(campo).tipo();
 		if(rac){
 			// caso Nat
-			Dicc<Nat, Conj<Registro& > > d;
+			Dicc/*Nat*/<Nat, Conj<Registro& > > d;
 			Conj<Registro& >::const_Iterador itcr2=cr2.CrearIt();
 			while(itcr2.HaySiguiente()){
 				Dato valor=itcr2.Siguiente().Significado(campo);
@@ -476,7 +476,7 @@ Conj<Registro& > combinarRegistros(const NombreCampo& campo, const Conj<Registro
 			}
 		}else{
 			// caso String
-			Dicc<String, Conj<Registro& > > d;
+			Dicc/*String*/<String, Conj<Registro& > > d;
 			Conj<Registro& >::const_Iterador itcr2=cr2.CrearIt();
 			while(itcr2.HaySiguiente()){
 				Dato valor=itcr2.Siguiente().Significado(campo);
@@ -546,7 +546,36 @@ Conj<Conj<Registro >::Iterador > Tabla::buscarEnTabla(const Registro& criterio)c
 }
 
 
-
+Conj<Dato > dameColumna(const NombreCampo& campo, const Conj<Registro& > cr)const{
+	assert(!cr.EsVacio());
+	Conj<Dato > res;
+	Conj<Registro& >::const_Iterador it=cr.CrearIt();
+	Tipo Tvalor=it.Siguiente().Significado(campo).tipo();
+	if(Tvalor){
+		Dicc/*Nat*/<Nat, Dato > bolsaN;
+		while(it.HaySiguiente()){
+			bolsaN.Definir(it.Siguiente().Significado(campo).valorNat(),it.Siguiente().Significado(campo));
+			it.Avanzar();
+		}
+		aed2::Lista<Nat& >::Iterador itN=bolsaN.diccClaves();
+		while(itN.HaySiguiente()){
+			res.AgregarRapido(bolsaN.Significado(itN.Siguiente()));
+			itN.Avanzar();
+		}
+	}else{
+		Dicc/*String*/<String, Dato > bolsaS;
+		while(it.HaySiguiente()){
+			bolsaS.Definir(it.Siguiente().Significado(campo).valorString(),it.Siguiente().Significado(campo));
+			it.Avanzar();
+		}
+		aed2::Conj<String& >::Iterador itS=bolsaS.diccClaves();
+		while(itS.HaySiguiente()){
+			res.AgregarRapido(bolsaS.Significado(itS.Siguiente()));
+			itS.Avanzar();
+		}
+	}
+	return res;
+}
 
 }; //namespace aed2
 
@@ -570,5 +599,6 @@ int main(){
 	assert(tt.registros().Pertenece(reg));
 	assert(tt.campos().Pertenece("Nombre"));
 	tt.indexar("Dni");
+	assert(t.cantidadDeAccesos()==2);
 	return 0;
 };
