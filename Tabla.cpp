@@ -10,7 +10,7 @@ namespace aed2{
 
 //Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Registro& columnas);
 
-Tabla::Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Registro& columnas){
+Tabla::Tabla(const NombreTabla& nombre, const Conj<const NombreCampo& >& claves, const Registro& columnas){
 	Nombre_=nombre;
 	Registro::const_Iterador it=columnas.CrearIt();
 	while(it.HaySiguiente()){
@@ -41,7 +41,7 @@ Tabla::Tabla(const Tabla& t){
 	Dato minSS(t.IndiceS.Min);
 	this->IndiceS.Min=minSS;
 
-	Conj<NombreCampo >::const_Iterador itclaves = t.Claves_.CrearIt();
+	Conj<const NombreCampo& >::const_Iterador itclaves = t.Claves_.CrearIt();
 	while(itclaves.HaySiguiente()){
 		this->Claves_.Agregar(itclaves.Siguiente());
 		itclaves.Avanzar();
@@ -53,7 +53,7 @@ Tabla::Tabla(const Tabla& t){
 		this->Campos_.Definir(itcampos.SiguienteClave(), itcampos.SiguienteSignificado());
 		itcampos.Avanzar();
 	}
-	Conj<Registro >::const_Iterador itregistros = t.Registros_.CrearIt();
+	Conj<Registro& >::const_Iterador itregistros = t.Registros_.CrearIt();
 	while(itregistros.HaySiguiente()){
 		Registro r;
 		Registro::const_Iterador itreg=itregistros.Siguiente().CrearIt();
@@ -73,7 +73,7 @@ Tabla::~Tabla(){}
 void Tabla::agregarRegistro(const Registro& registro_){
 	cantAccesos++;
 	Registro reg=Registro(registro_);
-	aed2::Conj<Registro >::Iterador nuevo= Registros_.Agregar(reg);
+	aed2::Conj<Registro& >::Iterador nuevo= Registros_.Agregar(reg);
 	bool TipoRelacion=Campos_.Significado(CampoR);
 	Acceso a;
 	if(this->indices().Cardinal()>0){
@@ -193,14 +193,14 @@ const aed2::Conj<aed2::NombreCampo > Tabla::indices()const{
 }
 
 
-aed2::Conj<Registro > Tabla::registros()const{
-	return this->Registros_;
+Conj<Registro& >& Tabla::registros(){
+	return Registros_;
 }
 
 void Tabla::borrarRegistro(const Registro& valor){
 	cantAccesos++;
 	// registro_ tiene un solo campo que es clave.
-	Conj<Registro >::Iterador itguia;
+	Conj<Registro& >::Iterador itguia;
 	Registro guia;
 	NombreCampo campovalor=valor.CrearIt().SiguienteClave();
 	Dato datovalor=valor.CrearIt().SiguienteSignificado();
@@ -271,7 +271,7 @@ void Tabla::borrarRegistro(const Registro& valor){
 
 	}else{
 		//no hay indice
-		Conj<Registro >::Iterador itreg=Registros_.CrearIt();
+		Conj<Registro& >::Iterador itreg=Registros_.CrearIt();
 		while(itreg.HaySiguiente()){
 			if(itreg.Siguiente().Significado(campovalor)==datovalor){
 
@@ -313,8 +313,8 @@ void Tabla::indexar(const NombreCampo& campo)
 {
 	assert(this->tipoCampo(campo) and !IndiceN.EnUso);
 	assert(!this->tipoCampo(campo) and !IndiceS.EnUso);
-	Conj<aed2::Conj<Registro >::Iterador >::Iterador SS;
-	Conj<aed2::Conj<Registro >::Iterador >::Iterador NN;
+	Conj<aed2::Conj<Registro& >::Iterador >::Iterador SS;
+	Conj<aed2::Conj<Registro& >::Iterador >::Iterador NN;
 	if(this->tipoCampo(campo)){
 		IndiceN.EnUso=true;
 		IndiceN.CampoI=campo;
@@ -322,7 +322,7 @@ void Tabla::indexar(const NombreCampo& campo)
 		IndiceS.EnUso=true;
 		IndiceS.CampoI=campo;
 	}
-	Conj<Registro >::Iterador itreg=Registros_.CrearIt();
+	Conj<Registro& >::Iterador itreg=Registros_.CrearIt();
 	while(itreg.HaySiguiente()){
 		Registro R=itreg.Siguiente();
 		if(this->tipoCampo(campo)){
@@ -385,7 +385,7 @@ const Tipo& Tabla::tipoCampo(const NombreCampo& c) const{
 	return Campos_.Significado(c);
 };
 
-Conj<const NombreCampo&> Tabla::campos()const{
+const Conj<const NombreCampo&> Tabla::campos()const{
 	Dicc<const NombreCampo&, Tipo >::const_Iterador itcampos=this->Campos_.CrearIt();
 	Conj<const NombreCampo&> cjcampos;
 	while(itcampos.HaySiguiente()){
@@ -399,21 +399,42 @@ const NombreTabla& Tabla::nombre()const{
 	return this->Nombre_;
 };
 
+const Conj<const NombreCampo&>& Tabla::claves()const{
+	return Claves_;
+}
+
 const Nat& Tabla::cantidadDeAccesos() const{
 	return this->cantAccesos;
 };
+//const Registro& r,const Conj<const NombreCampo&>& cc, const Conj<Registro& >& cr
+const bool Tabla::puedoInsertar(const Registro& r)const{
+	return this->compatible(r) and this->hayCoincidencia(r, Claves_, Registros_);
+};
 
-//const bool Tabla::puedoInsertar(const Registro& r)const{
-//
-//};
+const bool Tabla::hayCoincidencia(const Registro& r,const Conj<const NombreCampo&>& cc, const Conj<Registro& >& cr)const{
+	Conj<Registro& >::const_Iterador itcr=cr.CrearIt();
+	bool val=false;
+	while(itcr.HaySiguiente()){
+		val=r.coincideAlguno(cc, itcr.Siguiente())or val;
+		itcr.Avanzar();
+	}
+	return val;
+}
 
-
-//const bool Tabla::compatible(const Registro& reg){
-//	bool valor=true;
-//	if(reg.campos().){
-//
-//	}
-//}
+const bool Tabla::compatible(const Registro& reg)const{
+	bool valor=true;
+	if(reg.campos().Cardinal()=this->campos().Cardinal()){
+		Conj<const NombreCampo&>::const_Iterador itcampos= this->campos().CrearIt();
+		while(valor and itcampos.HaySiguiente()){
+			NombreCampo c=itcampos.Siguiente();
+			valor=reg.Definido(c);
+			itcampos.Avanzar();
+		}
+	}else{
+		valor=false;
+	}
+	return (valor and this->mismosTipos(reg));
+}
 
 const Dato& Tabla::minimo(const NombreCampo& campo)const{
 		if(IndiceN.EnUso and IndiceN.CampoI==campo){
@@ -439,23 +460,10 @@ const bool Tabla::puedeIndexar(const NombreCampo& c)const{
 	}
 }
 
-const bool Tabla::hayCoincidencia(const Registro& reg, const Conj<NombreCampo > cjcampo, const Conj<Registro& > cjreg)const{
 
-}
 
-Conj<Conj<Registro >::Iterador > Tabla::coincidencias(const Registro& crit, Conj<Registro > cjreg){
-	Conj<Conj<Registro >::Iterador > salida;
-	Conj<Registro >::Iterador itcr=cjreg.CrearIt();
-	while(itcr.HaySiguiente()){
-		if(crit.coincidenTodos(crit.campos(),itcr.Siguiente())){
-			salida.AgregarRapido(itcr);
-		}
-		itcr.Avanzar();
-	}
-	return salida;
-}
 
-Conj<Registro& > combinarRegistros(const NombreCampo& campo, const Conj<Registro& > cr1, const Conj<Registro& > cr2){
+Conj<Registro& >& combinarRegistros(const NombreCampo& campo, const Conj<Registro& >& cr1, const Conj<Registro& >& cr2){
 	Conj<Registro& > res;
 	Conj<Registro& >::const_Iterador itcr1=cr1.CrearIt();
 	if(cr2.Cardinal()>0){
@@ -497,20 +505,20 @@ Conj<Registro& > combinarRegistros(const NombreCampo& campo, const Conj<Registro
 	return res;
 }
 
-const bool Tabla::mismosTipos(const Registro& reg)const{
-	bool valor=true;
-	Conj<NombreCampo& > itClaves=reg.Campos().CrearIt();
-	while(valor and itClaves.HaySiguiente()){
-		bool val1=reg.Significado(itClaves.Siguiente());
-		bool val2=this->tipoCampo(itCampos.Siguiente());
-		bool valor=(val1==val2);
-		itClaves.Avanzar();
-	}
-	return valor;
-};
+//const bool Tabla::mismosTipos(const Registro& reg)const{
+//	bool valor=true;
+//	Conj<NombreCampo& > itClaves=reg.Campos().CrearIt();
+//	while(valor and itClaves.HaySiguiente()){
+//		bool val1=reg.Significado(itClaves.Siguiente());
+//		bool val2=this->tipoCampo(itCampos.Siguiente());
+//		bool valor=(val1==val2);
+//		itClaves.Avanzar();
+//	}
+//	return valor;
+//};
 
-Conj<Conj<Registro >::Iterador > Tabla::buscarEnTabla(const Registro& criterio)const{
-	Conj<NombreCampo& > itcampos=Campos_.DiccClaves().CrearIt();
+Conj<Conj<Registro& >::Iterador > Tabla::buscarEnTabla(const Registro& criterio)const{
+	Conj<const NombreCampo& >::const_Iterador itcampos=this->campos().CrearIt();
 	bool Encontrado=false;
 	NombreCampo EncontradoCampoInd;
 	Conj<NombreCampo& > cj;
@@ -541,12 +549,25 @@ Conj<Conj<Registro >::Iterador > Tabla::buscarEnTabla(const Registro& criterio)c
 			return IndiceDS.Significado(valor);
 		}
 	}else{
-		return this->coincidencias(criterio, Registros_);
+		return	this->coincidencias(criterio, Registros_);
 	}
 }
 
+Conj<Conj<Registro& >::Iterador > Tabla::coincidencias(const Registro& crit, Conj<Registro& > cjreg)const{
+	Conj<Conj<Registro& >::Iterador > salida;
+	Conj<Registro& >::Iterador itcr=cjreg.CrearIt();
+	while(itcr.HaySiguiente()){
+		if(crit.coincidenTodos(crit.campos(),itcr.Siguiente())){
+			salida.AgregarRapido(itcr);
+		}
+		itcr.Avanzar();
+	}
+	return salida;
+}
 
-Conj<Dato > dameColumna(const NombreCampo& campo, const Conj<Registro& > cr)const{
+
+
+Conj<Dato > Tabla::dameColumna(const NombreCampo& campo, const Conj<Registro& > cr)const{
 	assert(!cr.EsVacio());
 	Conj<Dato > res;
 	Conj<Registro& >::const_Iterador it=cr.CrearIt();
@@ -557,7 +578,7 @@ Conj<Dato > dameColumna(const NombreCampo& campo, const Conj<Registro& > cr)cons
 			bolsaN.Definir(it.Siguiente().Significado(campo).valorNat(),it.Siguiente().Significado(campo));
 			it.Avanzar();
 		}
-		aed2::Lista<Nat& >::Iterador itN=bolsaN.diccClaves();
+		aed2::Lista<Nat& >::Iterador itN=bolsaN.diccClaves().CrearIt();
 		while(itN.HaySiguiente()){
 			res.AgregarRapido(bolsaN.Significado(itN.Siguiente()));
 			itN.Avanzar();
@@ -568,7 +589,7 @@ Conj<Dato > dameColumna(const NombreCampo& campo, const Conj<Registro& > cr)cons
 			bolsaS.Definir(it.Siguiente().Significado(campo).valorString(),it.Siguiente().Significado(campo));
 			it.Avanzar();
 		}
-		aed2::Conj<String& >::Iterador itS=bolsaS.diccClaves();
+		aed2::Conj<String& >::Iterador itS=bolsaS.diccClaves().CrearIt();
 		while(itS.HaySiguiente()){
 			res.AgregarRapido(bolsaS.Significado(itS.Siguiente()));
 			itS.Avanzar();
@@ -580,17 +601,18 @@ Conj<Dato > dameColumna(const NombreCampo& campo, const Conj<Registro& > cr)cons
 }; //namespace aed2
 
 int main(){
-	aed2::Conj<aed2::NombreCampo > cjcampo;
+	aed2::Conj<const aed2::NombreCampo& > cjcampo;
 	cjcampo.Agregar("Nombre");
 	cjcampo.Agregar("Dni");
 	aed2::Registro reg;
 	aed2::Registro crit;
+	aed2::String name="tabla";
 	aed2::Dato datonumero(1);
 	aed2::Dato datoletra("a");
 	reg.Definir("Nombre", datoletra);
 	reg.Definir("Dni", datonumero);
 	crit.Definir("Dni", datonumero);
-	aed2::Tabla t("tabla", cjcampo, reg);
+	aed2::Tabla t("Tabla", cjcampo, reg);
 	t.agregarRegistro(reg);
 	assert(t.registros().Pertenece(reg));
 	aed2::Tabla tt(t);
