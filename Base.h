@@ -4,6 +4,7 @@
 #include "Dato.h"
 #include "Tipos.h"
 #include "Tabla.h"
+#include "DiccNat.h"
 #include "aed2/Dicc.h"
 #include "aed2/Conj.h"
 #include "aed2/TiposBasicos.h"
@@ -58,7 +59,7 @@ class Base
 	struct Tmax{
 			NombreTabla NomTabla;
 			Nat Modif;
-			Tmax(): NomTabla("Ninguna"), Modif(0){};
+			Tmax(): NomTabla(""), Modif(0){};
 		};
 
 	struct InfoTabla{
@@ -72,7 +73,7 @@ class Base
 		NombreCampo CampoJ;
 		Tipo CampoT;
 		Dicc/*String*/<String, Conj<Registro>::Iterador> JoinS;
-		Dicc/*Nat*/<Nat, Conj<Registro>::Iterador> JoinN;
+		DiccNat<Conj<Registro>::Iterador> JoinN;
 		Conj<Registro> JoinC;
 		InfoJoin(NombreCampo nc,
 				Tipo tc,
@@ -97,12 +98,14 @@ class Base
 
 Base::Base()
 {
-	//Hacer...
+	this->TabMaxima = Tmax();
+	this->Tablas = Dicc/*String*/<NombreTabla, InfoTabla>();
 };
 
 Conj<NombreTabla>::Iterador Base::DameTablas()
 {
-	//return Base::Tablas.Claves();
+	return this->Tablas.claves_;
+	//return this->Tablas.Claves();
 };
 
 Tabla Base::DameTabla(const NombreTabla t)
@@ -117,7 +120,8 @@ bool Base::HayJoin(const NombreTabla t1, const NombreTabla t2)
 
 NombreCampo Base::CampoJoin(const NombreTabla t1, const NombreTabla t2)
 {
-	return this->Tablas.Significado(t1).Joins.Significado(t2).CampoJ;
+	InfoJoin* InfoJ = this->Tablas.Significado(t1).Joins.Significado(t2);
+	return InfoJ->CampoJ;
 };
 
 void Base::AgregarTabla(const Tabla t)
@@ -175,7 +179,7 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 				Conj<Conj<Registro>::Iterador> c = InfoT->TActual.buscarEnTabla(cr);
 				Registro reg = c.CrearIt().Siguiente().Siguiente();
 				DatoCambio DatoC = DatoCambio(reg, itNom.Siguiente(), false);
-				InfoJ->Rcambios.AgregarAtras(DatoC);
+				InfoJ->Rcambios.Lista<DatoCambio>::AgregarAtras(DatoC);
 			}else{
 
 				Conj<Conj<Registro>::Iterador> eje = InfoT->TActual.buscarEnTabla(cr);
@@ -201,9 +205,110 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 	}
 };
 
-void Base::GenerarVistaJoin(const NombreTabla, const NombreTabla, const NombreCampo)
+void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const NombreCampo c)
 {
-	//Hacer...
+	Lista<DatoCambio> Rcambios = Lista<DatoCambio>();
+
+	Tipo CampoT = this->Tablas.Significado(t1).TActual.tipoCampo(c);
+
+	NombreTabla CampoJ = c;
+
+	Dicc/*String*/<String, Conj<Registro>::Iterador> JoinS = Dicc/*String*/<String, Conj<Registro>::Iterador>();
+	DiccNat<Conj<Registro>::Iterador> JoinN = DiccNat<Conj<Registro>::Iterador>();
+
+	Conj<Registro> JoinC = Conj<Registro>();
+
+	Tabla* Ta1 = this->Tablas.Significado(t1).TActual;
+	Tabla* Ta2 = this->Tablas.Significado(t2).TActual;
+
+	Nat n = Ta1->Registros_.Cardinal();
+	Nat m = Ta2->Registros_.Cardinal();
+
+	Conj<Dato> cjd1 = Ta1->dameColumna(c, Ta1->registros());
+	Conj<Dato> cjd2 = Ta2->dameColumna(c, Ta2->registros());
+
+	Conj<Dato>::Iterador itcjd1 = cjd1.CrearIt();
+
+	Dicc/*String*/<String, bool> ds = Dicc/*String*/<String, bool>();
+	DiccNat<bool> dn = DiccNat<bool>();
+
+	Conj<Dato> cjD = Conj<Dato>();
+
+	if(!CampoT)
+	{
+		while(itcjd1.HaySiguiente())
+		{
+			ds.Definir(itcjd1.Siguiente().valorString(), true);
+			itcjd1.Avanzar();
+		}
+
+		Conj<Dato>::Iterador itcjd2 = cjd2.CrearIt();
+
+		while(itcjd2.HaySiguiente())
+		{
+			bool Def = ds.Definido(itcjd2.Siguiente().valorString());
+
+			if(Def)
+			{
+				cjD.AgregarRapido(itcjd2.Siguiente());
+			}
+			itcjd2.Avanzar();
+		}
+
+	}else
+	{
+		while(itcjd1.HaySiguiente())
+		{
+			dn.Definir(itcjd1.Siguiente().valorNat(), true);
+			itcjd1.Avanzar();
+		}
+
+		Conj<Dato>::Iterador itcjd2 = cjd2.CrearIt();
+
+		while(itcjd2.HaySiguiente())
+		{
+			bool Def = dn.Definido(itcjd2.Siguiente().valorNat());
+
+			if(Def)
+			{
+				cjD.AgregarRapido(itcjd2.Siguiente());
+			}
+			itcjd2.Avanzar();
+		}
+	}
+
+	if(!cjD.EsVacio())
+	{
+		Conj<Dato>::Iterador its = cjD.CrearIt();
+
+		while(its.HaySiguiente())
+		{
+			Registro regModelo = Dicc/*String*/<NombreCampo, Dato>().Definir(c, its.Siguiente());
+
+			Conj<Conj<Registro>::Iterador> cjr1 = Ta1->buscarEnTabla(regModelo);
+			Conj<Conj<Registro>::Iterador> cjr2 = Ta2->buscarEnTabla(regModelo);
+
+			Registro r1 = cjr1.CrearIt().Siguiente().Siguiente();
+			Registro r2 = cjr2.CrearIt().Siguiente().Siguiente();
+
+			if(!CampoT)
+			{
+				Conj<Registro>::Iterador itnuevo = JoinC.AgregarRapido(r1.UnirRegistros(r2));
+				JoinS.Definir(its.Siguiente().valorString(), itnuevo);
+
+			}else
+			{
+				Conj<Registro>::Iterador itnuevo = JoinC.AgregarRapido(r1.UnirRegistros(r2));
+				JoinN.Definir(its.Siguiente().valorNat(), itnuevo);
+			}
+
+			its.Avanzar();
+
+		}
+	}
+	InfoJoin InfoJ = InfoJoin(Rcambios, CampoJ, CampoT, JoinS, JoinN, JoinC);
+	this->Tablas.Significado(t1).Joins.Definir(t2, InfoJ);
+	this->Tablas.Significado(t2).Joins.Definir(t1, InfoJ);
 };
 
 void Base::BorrarJoin(const NombreTabla t1, const NombreTabla t2)
