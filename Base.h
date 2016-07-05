@@ -21,13 +21,13 @@ class Base
 
 	Base();
 
-	Conj<NombreTabla>::Iterador Tablas();
+	Conj<NombreTabla>::Iterador DameTablas();
 
 	Tabla DameTabla(const NombreTabla);
 
 	bool HayJoin(const NombreTabla, const NombreTabla);
 
-	Conj<NombreCampo>::Iterador CampoJoin();
+	NombreCampo CampoJoin(const NombreTabla, const NombreTabla);
 
 	void AgregarTabla(const Tabla);
 
@@ -43,7 +43,7 @@ class Base
 
 	Conj<Registro> VistaJoin(const NombreTabla, const NombreTabla);
 
-	Nat CantidadDeAccesos(const NombreTabla) const;
+	int CantidadDeAccesos(const NombreTabla) const;
 
 	const NombreTabla TablaMaxima();
 
@@ -88,7 +88,7 @@ class Base
 		DatoCambio(Registro r, NombreTabla n, bool b): Reg(r), NomOrigen(n), Accion(b) {};
 	};
 
-	Tmax TablaMaxima;
+	Tmax TabMaxima;
 	Dicc/*String*/<NombreTabla, InfoTabla> Tablas;
 
 
@@ -100,87 +100,150 @@ Base::Base()
 	//Hacer...
 };
 
-Conj<NombreTabla>::Iterador Tablas();
+Conj<NombreTabla>::Iterador Base::DameTablas()
+{
+	//return Base::Tablas.Claves();
+};
+
+Tabla Base::DameTabla(const NombreTabla t)
+{
+	return this->Tablas.Significado(t).TActual;
+};
+
+bool Base::HayJoin(const NombreTabla t1, const NombreTabla t2)
+{
+	return this->Tablas.Significado(t1).Joins.Definido(t2) && this->Tablas.Significado(t2).Joins.Definido(t1);
+};
+
+NombreCampo Base::CampoJoin(const NombreTabla t1, const NombreTabla t2)
+{
+	return this->Tablas.Significado(t1).Joins.Significado(t2).CampoJ;
+};
+
+void Base::AgregarTabla(const Tabla t)
+{
+	InfoTabla it = InfoTabla(t);
+	this->Tablas.Definir(t.Nombre_, it);
+};
+
+void Base::InsertarEntrada(const Registro r, const NombreTabla t)
+{
+	InfoTabla* InfoT = this->Tablas.Significado(t);
+	InfoT->TActual.agregarRegistro(r);
+	InfoT->TActual.cantAccesos++;
+
+
+	if(InfoT->Joins.claves_.EsVacia() /*InfoT->Joins.Vacio()*/)
+	{
+		//Conj<NombreTabla>::Iterador NomTab = InfoT.Joins.Claves().CrearIt();
+		Lista<NombreTabla>::Iterador NomTab = InfoT->Joins.claves_.CrearIt();
+
+		while(NomTab.HaySiguiente()){
+
+			InfoJoin InfoJ = InfoT->Joins.Significado(NomTab.Siguiente());
+			DatoCambio DatoC = DatoCambio(r, t, true);
+			InfoJ.Rcambios.AgregarAtras(DatoC);
+			NomTab.Avanzar();
+
+		}
+
+	}
+
+	if(InfoT->TActual.cantAccesos > this->TabMaxima.Modif)
+	{
+		this->TabMaxima.Modif = InfoT->TActual.cantAccesos;
+		this->TabMaxima.NomTabla = t;
+	}
+
+
+
+};
+
+void Base::Borrar(const Registro cr, const NombreTabla t)
+{
+	InfoTabla* InfoT = this->Tablas.Significado(t);
+
+	if(InfoT->Joins.claves_.EsVacia() /*InfoT.Joins.Vacio()*/)
+	{
+		Lista<NombreTabla>::Iterador itNom = InfoT->Joins.claves_.CrearIt();
+
+		while(itNom.HaySiguiente()){
+			InfoJoin* InfoJ = InfoT->Joins.Significado(itNom.Siguiente());
+
+			if(cr.Definido(InfoJ->CampoJ))
+			{
+				Conj<Conj<Registro>::Iterador> c = InfoT->TActual.buscarEnTabla(cr);
+				Registro reg = c.CrearIt().Siguiente().Siguiente();
+				DatoCambio DatoC = DatoCambio(reg, itNom.Siguiente(), false);
+				InfoJ->Rcambios.AgregarAtras(DatoC);
+			}else{
+
+				Conj<Conj<Registro>::Iterador> eje = InfoT->TActual.buscarEnTabla(cr);
+				Conj<Conj<Registro>::Iterador>::Iterador itReg = eje.CrearIt();
+
+				while(itReg.HaySiguiente())
+				{
+					DatoCambio DatoC = DatoCambio(itReg.Siguiente(), t, false);
+					InfoJ->Rcambios.AgregarAtras(DatoC);
+					itReg.Avanzar();
+				}
+			}
+		}
+	}
+
+	InfoT->TActual.borrarRegistro(cr);
+	InfoT->TActual.cantAccesos++;
+
+	if(InfoT->TActual.cantAccesos > this->TabMaxima.Modif)
+	{
+		this->TabMaxima.NomTabla = t;
+		this->TabMaxima.Modif = InfoT->TActual.cantAccesos;
+	}
+};
+
+void Base::GenerarVistaJoin(const NombreTabla, const NombreTabla, const NombreCampo)
 {
 	//Hacer...
 };
 
-Tabla DameTabla(const NombreTabla);
+void Base::BorrarJoin(const NombreTabla t1, const NombreTabla t2)
+{
+	this->Tablas.Significado(t1).Joins.Borrar(t2);
+	this->Tablas.Significado(t2).Joins.Borrar(t1);
+};
+
+Conj<Base::Registro> Base::Registros(const NombreTabla t)
+{
+	return this->Tablas.Significado(t).TActual.Registros_;
+};
+
+Conj<Base::Registro> Base::VistaJoin(const NombreTabla, const NombreTabla)
 {
 	//Hacer...
 };
 
-bool HayJoin(const NombreTabla, const NombreTabla);
+int Base::CantidadDeAccesos(const NombreTabla t) const
 {
-	//Hacer...
+
+	return this->Tablas.Significado(t).TActual.cantAccesos;
 };
 
-Conj<NombreCampo>::Iterador CampoJoin();
+const NombreTabla Base::TablaMaxima()
 {
-	//Hacer...
+	return this->TabMaxima.NomTabla;
 };
 
-void AgregarTabla(const Tabla);
+
+Conj<Conj<Base::Registro>::Iterador> Base::Buscar(const Registro c, const NombreTabla t)
 {
-	//Hacer...
+	return this->Tablas.Significado(t).TActual.buscarEnTabla(c);
 };
 
-void InsertarEntrada(const Registro, const NombreTabla);
-{
-	//Hacer...
-};
 
-void Borrar(const Registro, const NombreTabla);
-{
-	//Hacer...
-};
-
-void GenerarVistaJoin(const NombreTabla, const NombreTabla, const NombreCampo);
-{
-	//Hacer...
-};
-
-void BorrarJoin(const NombreTabla, const NombreTabla);
-{
-	//Hacer...
-};
-
-Conj<Registro> Registros(const NombreTabla);
-{
-	//Hacer...
-};
-
-Conj<Registro> VistaJoin(const NombreTabla, const NombreTabla);
-{
-	//Hacer...
-};
-
-Nat CantidadDeAccesos(const NombreTabla) const;
-{
-	//Hacer...
-};
-
-const NombreTabla TablaMaxima();
-{
-	//Hacer...
-};
-
-const NombreTabla EncontrarMaximo(const NombreTabla, const Conj<NombreTabla>);
-{
-	//Hacer...
-};
-
-Conj<Conj<Registro>::Iterador> Buscar(const Registro, const NombreTabla);
-{
-	//Hacer...
-};
 
 
 
 }; // namespace aed2
-
-
-
 
 
 
