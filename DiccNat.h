@@ -5,9 +5,7 @@
 #include "Tipos.h"
 #include "aed2/Lista.h"
 
-
-namespace aed2
-{
+using namespace aed2;
 
 template<typename S>
 class DiccNat
@@ -22,7 +20,7 @@ class DiccNat
     void Definir(const Nat& clave, const S& significado);
     //void DefinirRapido(const Nat& clave, const S& significado);
     bool Definido(const Nat& clave) const;
-    S Significado(const Nat& clave);
+    const S& Significado(const Nat& clave);
     void Borrar(const Nat& clave);
     Lista<Nat>& Claves();
     Nat Maximo();
@@ -126,7 +124,7 @@ template<typename S>
 void DiccNat<S>::Definir(const Nat& clave, const S& significado)
 {
 		Lista<Nat>::Iterador puntero;
-		puntero= claves.Lista<Nat>::AgregarAtras(clave);
+		puntero= claves.AgregarAtras(clave);
 		Nodo* n = new Nodo(clave, significado, puntero);
 
 		if(this->primero==NULL){
@@ -193,28 +191,27 @@ bool DiccNat<S>::Definido(const Nat& clave) const
 
 
 template<typename S>
-S DiccNat<S>::Significado(const Nat& clave)
+const S& DiccNat<S>::Significado(const Nat& clave)
 {
 	bool fin = true;
-	S res;
+
 	Nodo* actual = primero;
 
 	while(fin){
 
 			if(actual->clave==clave) {
-				res = actual->significado;
 				fin = false;
-			}
-
-			if(actual->clave>clave) {
-				actual=actual->izquierda;
 			}else{
-				actual=actual->derecha;
-			}
 
+				if(actual->clave>clave) {
+					actual=actual->izquierda;
+				}else{
+					actual=actual->derecha;
+				}
+			}
 		}
 
-	return res;
+	return actual->significado;
 };
 
 template<typename S>
@@ -402,12 +399,5 @@ std::ostream& DiccNat<S>::mostrarDicc(std::ostream& d) const
 
 		return d;
 };
-
-
-
-
-
-};
-
 
 #endif // DICCNAT_H_

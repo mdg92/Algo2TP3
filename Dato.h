@@ -3,12 +3,12 @@
 
 #include <cassert>
 #include "Tipos.h"
-#include "aed2\Dicc.h"
-#include "aed2\Conj.h"
-#include "aed2\TiposBasicos.h"
+#include "aed2/Dicc.h"
+#include "aed2/Conj.h"
+#include "aed2/TiposBasicos.h"
 
-namespace aed2
-{
+using namespace aed2;
+
 typedef bool Tipo;
 
 class Dato{
@@ -47,6 +47,4 @@ private:
 	 Nat valorNat_;
 };
 
-
-}; // fin del namespace aed2
 #endif /* DATO_H_ */
