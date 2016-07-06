@@ -143,7 +143,7 @@ aed2::Conj<NombreTabla> Driver::tablas() const
   assert(false);
 }
 
-const NombreTabla Driver::tablaMaxima() const
+NombreTabla Driver::tablaMaxima() const
 {
   // TODO ...
   assert(false);
@@ -163,13 +163,13 @@ bool Driver::tieneIndiceString(const NombreTabla& tabla) const
   assert(false);
 }
 
-const NombreCampo& Driver::campoIndiceNat(const NombreTabla& tabla) const
+NombreCampo Driver::campoIndiceNat(const NombreTabla& tabla) const
 {
   // TODO ...
   assert(false);
 }
 
-const NombreCampo& Driver::campoIndiceString(const NombreTabla& tabla) const
+NombreCampo Driver::campoIndiceString(const NombreTabla& tabla) const
 {
   // TODO ...
   assert(false);
@@ -195,7 +195,7 @@ bool Driver::hayJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
   assert(false);
 }
 
-const NombreCampo& Driver::campoJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
+NombreCampo Driver::campoJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
 {
   // TODO ...
   assert(false);
@@ -213,13 +213,7 @@ void Driver::borrarVistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla
   assert(false);
 }
 
-Driver::Registro unir(const Driver::Registro& reg1, const Driver::Registro& reg2, const NombreCampo& clave)
-{
-  // TODO ...
-  assert(false);
-}
-
-aed2::Conj<Driver::Registro> Driver::vistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
+aed2::Conj<Driver::Registro> Driver::vistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2)/* const*/
 {
   // TODO ...
   assert(false);
