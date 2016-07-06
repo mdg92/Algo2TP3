@@ -3,7 +3,7 @@
 using namespace aed2;
 int main(){
 	Registro p;
-	Dato(3) d;
+	Dato d(3);
 	p.Definir("TORTAAAAAA", d);
 	return 3;
 

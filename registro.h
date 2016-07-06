@@ -17,18 +17,19 @@ class Registro
   	//DiccLex();
   	//~DiccLex();
   	//DiccLex(const Registro&);
-  	void Definir(Campo, S&);
-  	bool Definido(Campo);
-  	void Borrar(Campo);
-  	S& Significado(Campo);
-  	const Conj<Campo>& Campos();
-  	Campo Maximo();
-  	Campo Minimo();
-  	bool BorrarPreg(const Registro&);
-  	bool CoincideAlguno(Conj<Campo>, const Registro&);
-  	bool CoincidenTodos(Conj<Campo>, const Registro&);
-  	Registro UnirRegistros(Campo, const Registro&);
-  	Registro CombinarTodos(Campo, Conj<Registro>);
+  	void Definir(NombreCampo, Dato&);
+  	bool Definido(NombreCampo);
+  	void Borrar(NombreCampo);
+  	Dato& Significado(NombreCampo);
+  	Conj<NombreCampo> Campos();
+  	NombreCampo Maximo();
+  	NombreCampo Minimo();
+  	bool BorrarPreg(Registro);
+  	bool EnTodos(NombreCampo, Conj<Registro>);
+  	bool CoincideAlguno(Conj<NombreCampo>,  Registro);
+  	bool CoincidenTodos(Conj<NombreCampo>,  Registro);
+  	Registro UnirRegistros(NombreCampo,  Registro);
+  	Registro CombinarTodos(NombreCampo, Conj<Registro>);
 
   private:
   	DiccLex<Dato> base;
@@ -36,96 +37,96 @@ class Registro
 
 };
 
-bool EnTodos(Campo, Conj<Registro>);
 
-void Registro::Definir(Campo s, S& d){
+
+void Registro::Definir(NombreCampo s, Dato& d){
 	this->base.Definir(s,d);
 };
 
 
-template<typename S>
-bool Registro::Definido(Campo s){
+bool Registro::Definido(NombreCampo s){
 	this->base.Definido(s);
 };
 
 
-template<typename S>
-void Registro::Borrar(Campo s){
+void Registro::Borrar(NombreCampo s){
 	this->base.Borrar(s);
 };
 
 
-template<typename S>
-S& Registro::Significado(Campo s){
+Dato& Registro::Significado(NombreCampo s){
 	return this->base.Significado(s);
 
 };
 
 
-template<typename S>
-const Conj<Campo>& Registro::Campos(){
-	return this->base.DiccClaves;
+Conj<NombreCampo> Registro::Campos(){
+	return this->base.DiccClaves();
 };
 
 
-template<typename S>
-Campo Registro::Maximo(){
+NombreCampo Registro::Maximo(){
 	return this->base.Maximo();
 };
 
 
-template<typename S>
-Campo Registro::Minimo(){
+NombreCampo Registro::Minimo(){
 	return this->base.Minimo();
 };
 
-bool Registro::BorrarPreg(const Registro& otro){
-	return this->CoincidenTodos(this->Campos, otro);
+bool Registro::BorrarPreg( Registro r2){
+	Conj<NombreCampo>::Iterador it =(this->Campos()).CrearIt();
+	bool res=true;
+	while(res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
+	return res;
 };
-bool Registro::CoincideAlguno(Conj<Campo> cc, const Registro& r2){
-	Conj<Campo>::Iterador it =cc.CrearIt();
+bool Registro::CoincideAlguno(Conj<NombreCampo> cc,  Registro r2){
+	Conj<NombreCampo>::Iterador it =cc.CrearIt();
 	bool res=false;
-	while(!res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(i.Siguiente())), it.Avanzar();
+	while(!res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
 	return res;
 };
-bool Registro::CoincidenTodos(Conj<Campo> cc, const Registro& r2){
-	Conj<Campo>::Iterador it =cc.CrearIt();
+bool Registro::CoincidenTodos(Conj<NombreCampo> cc,  Registro r2){
+	Conj<NombreCampo>::Iterador it =cc.CrearIt();
 	bool res=true;
-	while(res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(i.Siguiente())), it.Avanzar();
+	while(res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
 	return res;
 };
-bool EnTodos(Campo c, Conj<Registro> cr){
-	Conj<Campo>::Iterador it =cc.CrearIt();
-	bool res=true;
-	while(res && it.HaySiguiente()) res= c.Definido(it.Siguiente()),it.Avanzar();
+bool Registro::EnTodos(NombreCampo c, Conj<Registro> cr){
+	Conj<Registro>::Iterador it =cr.CrearIt();
+	bool res=true; 	
+	while(res && it.HaySiguiente()){
+		res= it.Siguiente().Definido(c);
+		it.Avanzar();	
+	} 
 	return res;
 };
-Registro Registro::UnirRegistros(Campo c, const Registro& r2){
-	Conj<Campo>::Iterador itAux =r2.Campos().CrearIt();
+Registro Registro::UnirRegistros(NombreCampo c, Registro r2){
+	Conj<NombreCampo>::Iterador itAux =r2.Campos().CrearIt();
 	Registro res;
 	while(itAux.HaySiguiente()) res.Definir(itAux.Siguiente(), r2.Significado(itAux.Siguiente())), itAux.Avanzar();
-	Conj<Campo>::Iterador it =this->Campos().CrearIt();
+	Conj<NombreCampo>::Iterador it =this->Campos().CrearIt();
 	while(it.HaySiguiente()) res.Definir(it.Siguiente(), this->Significado(it.Siguiente())), it.Avanzar();
 	return res;
 };
-Registro Registro::CombinarTodos(Campo c, Conj<Registro> cr){
-	Conj<Campo>::Iterador it =cr.CrearIt();
+Registro Registro::CombinarTodos(NombreCampo c, Conj<Registro> cr){
+	Conj<Registro>::Iterador it =cr.CrearIt();
 	bool f=true;
 	Registro* res;
 	while(f && it.HaySiguiente()){
-		if (this->Significado(c)==(it.Siguiente()).Significado(c))
+		if (this->Significado(c)==(it.Siguiente()).Significado(c)){
 			res= &(this->UnirRegistros(c, it.Siguiente()));
-			f=false
+			f=false;
 		}
-		it.Avanzar;
+		it.Avanzar();
 	}
 	return *res;
 };
-
-
-
-
 };
+
+
+
+
 
 
 #endif // DICCLEX_H_
