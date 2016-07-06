@@ -14,6 +14,7 @@ namespace aed2
 class Registro
 {
   public:
+	Registro();
   	//DiccLex();
   	//~DiccLex();
   	//DiccLex(const Registro&);
@@ -37,6 +38,9 @@ class Registro
 
 };
 
+Registro::Registro(){
+	this->base=DiccLex<Dato>();
+};
 
 
 void Registro::Definir(NombreCampo s, Dato d){
@@ -94,13 +98,17 @@ bool Registro::CoincidenTodos(Conj<NombreCampo> cc,  Registro r2){
 };
 bool Registro::EnTodos(NombreCampo c, Conj<Registro> cr){
 	Conj<Registro>::Iterador it =cr.CrearIt();
-	bool res=true; 	
+	bool res=true;
 	while(res && it.HaySiguiente()){
-		res= it.Siguiente().Definido(c);
+		Registro r=it.Siguiente();
+		res = r.Definido(c);
 		it.Avanzar();	
 	} 
 	return res;
 };
+
+
+
 Registro Registro::UnirRegistros(NombreCampo c, Registro r2){
 	Conj<NombreCampo>::Iterador itAux =r2.Campos().CrearIt();
 	Registro res;
@@ -114,8 +122,10 @@ Registro Registro::CombinarTodos(NombreCampo c, Conj<Registro> cr){
 	bool f=true;
 	Registro* res;
 	while(f && it.HaySiguiente()){
-		if (this->Significado(c)==it.Siguiente().Significado(c)){
-			res= &(this->UnirRegistros(c, it.Siguiente()));
+		Registro r=it.Siguiente();
+		if (this->Significado(c)==r.Significado(c)){
+			Registro rder=this->UnirRegistros(c, it.Siguiente());
+			res= &(rder);
 			f=false;
 		}
 		it.Avanzar();
