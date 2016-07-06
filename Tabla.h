@@ -3,6 +3,8 @@
 
 #include "Dato.h"
 #include "Tipos.h"
+#include "DiccNat.h"
+#include "DiccLex.h"
 #include "aed2/Dicc.h"
 #include "aed2/Conj.h"
 #include "aed2/TiposBasicos.h"
@@ -31,9 +33,11 @@ class Tabla
 
     Nat cantidadDeAccesos() const;
 
-    Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo > claves, const Registro columnas);
+    //Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo > claves, const Registro columnas);
+    Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo > claves, const Conj<Columna> columnas);
 
-    Tabla(const Tabla& t);
+
+    //Tabla(const Tabla& t);
 
     ~Tabla();
 
@@ -66,7 +70,7 @@ class Tabla
   private:
 	NombreTabla Nombre_;
 	Conj<Registro > Registros_;
-	Dicc/*String*/< NombreCampo, Tipo > Campos_;//String
+	DiccLex<Tipo> Campos_;//String
 	Conj<NombreCampo > Claves_;
 	struct IndiceNat{
 		   NombreCampo CampoI;
@@ -83,25 +87,37 @@ class Tabla
 		   IndiceString(NombreCampo nom="a"):CampoI(nom), EnUso(false), Min("a"),Max("a"){};
 	};
 	IndiceString IndiceS;
-	Dicc/*String*/<String, Tabla::CjDeIteradores > IndiceDS;//DiccString
+	DiccLex<Tabla::CjDeIteradores > IndiceDS;//DiccString
 	IndiceNat IndiceN;
-	Dicc/*Nat*/<Nat, Tabla::CjDeIteradores > IndiceDN; //DiccNat
+	DiccNat<Tabla::CjDeIteradores > IndiceDN; //DiccNat
 	struct Acceso{
 		   aed2::Conj<aed2::Conj<Registro >::Iterador >::Iterador S;
 		   aed2::Conj<aed2::Conj<Registro >::Iterador >::Iterador N;
 		   //<>
 	};
 	NombreCampo CampoR;
-	Dicc/*Nat*/<Nat, Acceso> ConsultaN; //Nat
-	Dicc/*String*/<String, Acceso> ConsultaS;//String
+	DiccNat<Acceso> ConsultaN; //Nat
+	DiccLex<Acceso> ConsultaS;//String
 	int cantAccesos;
 }; // class Tabla
-
+/*
 Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, const Registro columnas){
 	Nombre_=nombre;
-	Registro::const_Iterador it=columnas.CrearIt();
+	Conj<Campo>::const_Iterador it=columnas.CrearIt();
 	while(it.HaySiguiente()){
 		Campos_.Definir(it.SiguienteClave(),it.SiguienteSignificado().tipo());
+		it.Avanzar();
+	};
+	Claves_=claves;
+	CampoR=claves.CrearIt().Siguiente();
+	cantAccesos=0;
+}*/
+
+Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, const Conj<Columna> columnas){
+	Nombre_=nombre;
+	Conj<Columna>::const_Iterador it=columnas.CrearIt();
+	while(it.HaySiguiente()){
+		Campos_.Definir(it.Siguiente().nombre,it.Siguiente().tipo);
 		it.Avanzar();
 	};
 	Claves_=claves;
@@ -110,6 +126,7 @@ Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, con
 }
 
 
+/*
 Tabla::Tabla(const Tabla& t){
 	this->Nombre_=t.Nombre_;
 	this->Claves_=t.Claves_;
@@ -133,7 +150,7 @@ Tabla::Tabla(const Tabla& t){
 		this->Claves_.Agregar(itclaves.Siguiente());
 		itclaves.Avanzar();
 	}
-	Dicc<const NombreCampo, Tipo >::const_Iterador itcampos =t.Campos_.CrearIt();
+	Dicc<NombreCampo, Tipo >::Iterador itcampos =t.Campos_.DiccClaves().CrearIt();
 	while(itcampos.HaySiguiente()){
 //		const NombreCampo a();
 //		const Tipo b();
@@ -154,20 +171,21 @@ Tabla::Tabla(const Tabla& t){
 		itregistros.Avanzar();
 	}
 }
+*/
 
 Tabla::~Tabla(){}
 
 void Tabla::agregarRegistro(const Registro registro_){
 	cantAccesos++;
-	Registro reg=Registro(registro_);
-	aed2::Conj<Registro >::Iterador nuevo= Registros_.Agregar(reg);
+	//Registro reg = Registro(registro_);
+	Conj<Registro>::Iterador nuevo= Registros_.Agregar(registro_);
 	bool TipoRelacion=Campos_.Significado(CampoR);
 	Acceso a;
 	if(this->indices().Cardinal()>0){
 		//Sabemos que hay algun indice
 		if(IndiceS.EnUso and IndiceN.EnUso){
 			Tabla::CjDeIteradores::Iterador itcjs;
-			aed2::String valorS= reg.Significado(IndiceS.CampoI).valorString();
+			aed2::String valorS= registro_.Significado(IndiceS.CampoI).valorString();
 			if(!IndiceDS.Definido(valorS)){
 				Tabla::CjDeIteradores cjs=IndiceDS.Significado(valorS);
 				itcjs=cjs.Agregar(nuevo);
@@ -179,7 +197,7 @@ void Tabla::agregarRegistro(const Registro registro_){
 			}
 			a.S=itcjs;
 			Tabla::CjDeIteradores::Iterador itcjn;
-			aed2::Nat valorN=reg.Significado(IndiceN.CampoI).valorNat();
+			aed2::Nat valorN=registro_.Significado(IndiceN.CampoI).valorNat();
 			if(IndiceDN.Definido(valorN)){
 				Tabla::CjDeIteradores cjn=IndiceDN.Significado(valorN);
 				itcjn=cjn.Agregar(nuevo);
@@ -191,12 +209,12 @@ void Tabla::agregarRegistro(const Registro registro_){
 			}
 			a.N=itcjn;
 			if(TipoRelacion){ //caso
-				ConsultaN.Definir(reg.Significado(CampoR).valorNat(), a);
+				ConsultaN.Definir(registro_.Significado(CampoR).valorNat(), a);
 			}else{ //caso string
-				ConsultaS.Definir(reg.Significado(CampoR).valorString(), a);
+				ConsultaS.Definir(registro_.Significado(CampoR).valorString(), a);
 			}
-			Dato valorSS=reg.Significado(IndiceS.CampoI);
-			Dato valorNN=reg.Significado(IndiceN.CampoI);
+			Dato valorSS=registro_.Significado(IndiceS.CampoI);
+			Dato valorNN=registro_.Significado(IndiceN.CampoI);
 			if(IndiceN.Max<=valorNN){
 				IndiceN.Max=valorNN;
 			}
@@ -212,7 +230,7 @@ void Tabla::agregarRegistro(const Registro registro_){
 		}else{
 			if(IndiceS.EnUso){
 				Tabla::CjDeIteradores::Iterador itcjs;
-				aed2::String valorS= reg.Significado(IndiceS.CampoI).valorString();
+				aed2::String valorS= registro_.Significado(IndiceS.CampoI).valorString();
 				if(!IndiceDS.Definido(valorS)){
 					Tabla::CjDeIteradores cjs=IndiceDS.Significado(valorS);
 					itcjs=cjs.Agregar(nuevo);
@@ -224,11 +242,11 @@ void Tabla::agregarRegistro(const Registro registro_){
 				}
 				a.S=itcjs;
 				if(TipoRelacion){ //caso
-					ConsultaN.Definir(reg.Significado(CampoR).valorNat(), a);
+					ConsultaN.Definir(registro_.Significado(CampoR).valorNat(), a);
 				}else{ //caso string
-					ConsultaS.Definir(reg.Significado(CampoR).valorString(), a);
+					ConsultaS.Definir(registro_.Significado(CampoR).valorString(), a);
 				}
-				Dato valorSS=reg.Significado(IndiceS.CampoI);
+				Dato valorSS=registro_.Significado(IndiceS.CampoI);
 				if(IndiceS.Max<=valorSS){
 					IndiceS.Max=valorSS;
 				}
@@ -238,8 +256,8 @@ void Tabla::agregarRegistro(const Registro registro_){
 			}else{
 				if(IndiceN.EnUso){
 					Tabla::CjDeIteradores::Iterador itcjn;
-					Dato valorNN=reg.Significado(IndiceN.CampoI);
-					aed2::Nat valorN=reg.Significado(IndiceN.CampoI).valorNat();
+					Dato valorNN=registro_.Significado(IndiceN.CampoI);
+					aed2::Nat valorN=registro_.Significado(IndiceN.CampoI).valorNat();
 					if(IndiceDN.Definido(valorN)){
 						Tabla::CjDeIteradores cjn=IndiceDN.Significado(valorN);
 						itcjn=cjn.Agregar(nuevo);
@@ -251,9 +269,9 @@ void Tabla::agregarRegistro(const Registro registro_){
 					}
 					a.N=itcjn;
 					if(TipoRelacion){ //caso nat
-						ConsultaN.Definir(reg.Significado(CampoR).valorNat(), a);
+						ConsultaN.Definir(registro_.Significado(CampoR).valorNat(), a);
 					}else{ //caso string
-						ConsultaS.Definir(reg.Significado(CampoR).valorString(), a);
+						ConsultaS.Definir(registro_.Significado(CampoR).valorString(), a);
 					}
 					if(IndiceN.Max<=valorNN){
 						IndiceN.Max=valorNN;
@@ -289,8 +307,8 @@ void Tabla::borrarRegistro(const Registro valor){
 	// registro_ tiene un solo campo que es clave.
 	Conj<Registro >::Iterador itguia;
 	Registro guia;
-	NombreCampo campovalor=valor.CrearIt().SiguienteClave();
-	Dato datovalor=valor.CrearIt().SiguienteSignificado();
+	NombreCampo campovalor=valor.Campos().CrearIt().Siguiente();
+	Dato datovalor=valor.Significado(campovalor);
 	bool tipocampovalor = Campos_.Significado(campovalor);
 	if((IndiceN.EnUso and IndiceN.CampoI==campovalor) or (IndiceS.EnUso and IndiceS.CampoI==campovalor)){
 		Acceso acceso_;
@@ -400,8 +418,8 @@ void Tabla::indexar(const NombreCampo campo)
 {
 	assert(this->tipoCampo(campo) and !IndiceN.EnUso);
 	assert(!this->tipoCampo(campo) and !IndiceS.EnUso);
-	Conj<aed2::Conj<Registro >::Iterador >::Iterador SS;
-	Conj<aed2::Conj<Registro >::Iterador >::Iterador NN;
+	Conj<Conj<Registro >::Iterador >::Iterador SS;
+	Conj<Conj<Registro >::Iterador>::Iterador NN;
 	if(this->tipoCampo(campo)){
 		IndiceN.EnUso=true;
 		IndiceN.CampoI=campo;
@@ -409,7 +427,7 @@ void Tabla::indexar(const NombreCampo campo)
 		IndiceS.EnUso=true;
 		IndiceS.CampoI=campo;
 	}
-	Conj<Registro >::Iterador itreg=Registros_.CrearIt();
+	Conj<Registro >::Iterador itreg=this->Registros_.CrearIt();
 	while(itreg.HaySiguiente()){
 		Registro R=itreg.Siguiente();
 		if(this->tipoCampo(campo)){
@@ -473,10 +491,10 @@ const Tipo Tabla::tipoCampo(const NombreCampo c) const{
 };
 
 const Conj<NombreCampo> Tabla::campos()const{
-	Dicc< NombreCampo, Tipo >::const_Iterador itcampos = this->Campos_.CrearIt();
-	Conj< NombreCampo> cjcampos;
+	Conj<NombreCampo>::Iterador itcampos = this->Campos_.DiccClaves().CrearIt();
+	Conj<NombreCampo> cjcampos;
 	while(itcampos.HaySiguiente()){
-		cjcampos.Agregar(itcampos.SiguienteClave());
+		cjcampos.Agregar(itcampos.Siguiente());
 		itcampos.Avanzar();
 	}
 	return cjcampos;
@@ -534,7 +552,7 @@ Conj<Conj<Registro >::Iterador > Tabla::coincidencias(const Registro crit, Conj<
 	Conj<Conj<Registro >::Iterador > salida;
 	Conj<Registro >::Iterador itcr=cjreg.CrearIt();
 	while(itcr.HaySiguiente()){
-		if(crit.coincidenTodos(crit.campos(),itcr.Siguiente())){
+		if(crit.CoincidenTodos(crit.Campos(),itcr.Siguiente())){
 			salida.AgregarRapido(itcr);
 		}
 		itcr.Avanzar();
@@ -577,7 +595,7 @@ const Conj<Registro >& combinarRegistros(const NombreCampo campo, const Conj<Reg
 		}
 		Conj<Registro >::const_Iterador itcr1=cr1.CrearIt();
 		while(itcr1.HaySiguiente()){
-			res.AgregarRapido(itcr1.Siguiente().combinarTodos(campo,cr2));
+			res.AgregarRapido(itcr1.Siguiente().CombinarTodos(campo,cr2));
 			itcr1.Avanzar();
 		}
 	}
@@ -586,8 +604,8 @@ const Conj<Registro >& combinarRegistros(const NombreCampo campo, const Conj<Reg
 
 bool Tabla::mismosTipos(const Registro reg)const{
 	bool valor=true;
-	Conj<NombreCampo > itClaves=reg.Campos().CrearIt();
-	while(valor and itClaves.HaySiguiente()){
+	Conj<NombreCampo> itClaves=reg.Campos().CrearIt();
+	while(valor && itClaves.HaySiguiente()){
 		bool val1=reg.Significado(itClaves.Siguiente());
 		bool val2=this->tipoCampo(itCampos.Siguiente());
 		bool valor=(val1==val2);
