@@ -9,6 +9,7 @@
 namespace aed2{
     typedef unsigned int Nat;
     typedef std::string String;
+    typedef std::string Campo;
     
 	/** 
 	 * Imprime un elemento a un string, en vez de a una pantalla, 
