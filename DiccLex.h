@@ -17,7 +17,7 @@ class DiccLex
   	DiccLex();
   	~DiccLex();
   	//DiccLex(const DiccLex<S>&);
-  	void Definir(String, S&);
+  	void Definir(String, S);
   	bool Definido(String);
   	void Borrar(String);
   	S& Significado(String);
@@ -67,7 +67,7 @@ DiccLex<S>::~DiccLex(){
 
 
 template<typename S>
-void DiccLex<S>::Definir(String s, S& d){
+void DiccLex<S>::Definir(String s, S d){
 	Nodo** aux=&this->_raiz;
 	int i = 0;
 	while(i<(s.length())){

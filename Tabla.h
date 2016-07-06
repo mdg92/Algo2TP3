@@ -6,11 +6,11 @@
 #include "aed2/Dicc.h"
 #include "aed2/Conj.h"
 #include "aed2/TiposBasicos.h"
-//#include "Registro.h"
+#include "registro.h"
 
 using namespace aed2;
 
-typedef aed2::Dicc/*String*/<NombreCampo, Dato> Registro;
+//typedef aed2::Dicc/*String*/<NombreCampo, Dato> Registro;
 class Tabla
 {
   public:
@@ -97,7 +97,7 @@ class Tabla
 	int cantAccesos;
 }; // class Tabla
 
-Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo > claves, const Registro columnas){
+Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, const Registro columnas){
 	Nombre_=nombre;
 	Registro::const_Iterador it=columnas.CrearIt();
 	while(it.HaySiguiente()){

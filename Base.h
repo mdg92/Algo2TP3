@@ -5,6 +5,8 @@
 #include "Tipos.h"
 #include "Tabla.h"
 #include "DiccNat.h"
+#include "DiccLex.h"
+#include "registro.h"
 #include "aed2/Lista.h"
 #include "aed2/Dicc.h"
 #include "aed2/Conj.h"
@@ -16,11 +18,11 @@ class Base
 {
 	public:
 
-	typedef aed2::Dicc/*String*/<NombreCampo, Dato> Registro;
+	//typedef aed2::Dicc/*String*/<NombreCampo, Dato> Registro;
 
 	Base();
 
-	Lista/*Conj*/<NombreTabla>::Iterador DameTablas();
+	Conj<NombreTabla>::Iterador DameTablas();
 
 	Tabla& DameTabla(const NombreTabla);
 
@@ -71,26 +73,26 @@ class Base
 		Lista<struct DatoCambio> Rcambios;
 		NombreCampo CampoJ;
 		Tipo CampoT;
-		Dicc/*String*/<String, Conj<Registro>::Iterador> JoinS;
+		DiccLex<Conj<Registro>::Iterador> JoinS;
 		DiccNat<Conj<Registro>::Iterador> JoinN;
 		Conj<Registro> JoinC;
 		InfoJoin(NombreCampo nc,
 				Tipo tc,
-				Dicc/*String*/<String, Conj<Registro>::Iterador> ds,
+				DiccLex<Conj<Registro>::Iterador> ds,
 				DiccNat<Conj<Registro>::Iterador> dn,
 				Conj<Registro> cr): Rcambios(Lista<struct DatoCambio>()), CampoJ(nc), CampoT(tc), JoinS(ds), JoinN(dn), JoinC(cr) {};
 	};
 	
 	struct InfoTabla{
 		Tabla TActual;
-		Dicc/*String*/<NombreTabla, struct InfoJoin> Joins;
-		InfoTabla(Tabla t): TActual(t), Joins(Dicc/*String*/<NombreTabla, InfoJoin>()){};
+		DiccLex<struct InfoJoin> Joins;
+		InfoTabla(Tabla t): TActual(t), Joins(DiccLex<InfoJoin>()){};
 	};
 
 
 
 	Tmax TabMaxima;
-	Dicc/*String*/<NombreTabla, InfoTabla> Tablas;
+	DiccLex<InfoTabla> Tablas;
 
 
 }; // class Base
@@ -99,13 +101,13 @@ class Base
 Base::Base()
 {
 	this->TabMaxima = Tmax();
-	this->Tablas = Dicc/*String*/<NombreTabla, InfoTabla>();
+	this->Tablas = DiccLex<InfoTabla>();
 };
 
-Lista/*Conj*/<NombreTabla>::Iterador Base::DameTablas()
+Conj<NombreTabla>::Iterador Base::DameTablas()
 {
-	return this->Tablas.claves().CrearIt();
-	//return this->Tablas.Claves();
+	//return this->Tablas.claves().CrearIt();
+	return this->Tablas.DiccClaves().CrearIt();
 };
 
 Tabla& Base::DameTabla(const NombreTabla t)
@@ -134,10 +136,10 @@ void Base::InsertarEntrada(const Registro r, const NombreTabla t)
 	InfoTabla* InfoT = &(this->Tablas.Significado(t));
 	InfoT->TActual.agregarRegistro(r);
 
-	if(InfoT->Joins.claves().EsVacia() /*InfoT->Joins.Vacio()*/)
+	if(InfoT->Joins.DiccClaves().EsVacio())
 	{
 		//Conj<NombreTabla>::Iterador NomTab = InfoT.Joins.Claves().CrearIt();
-		Lista<NombreTabla>::Iterador NomTab = InfoT->Joins.claves().CrearIt();
+		Lista<NombreTabla>::Iterador NomTab = InfoT->Joins.DiccClaves().CrearIt();
 
 		while(NomTab.HaySiguiente()){
 
@@ -162,9 +164,9 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 {
 	InfoTabla InfoT = this->Tablas.Significado(t);
 
-	if(InfoT.Joins.claves().EsVacia() /*InfoT.Joins.Vacio()*/)
+	if(InfoT.Joins.DiccClaves().EsVacio() /*InfoT.Joins.Vacio()*/)
 	{
-		Lista<NombreTabla>::Iterador itNom = InfoT.Joins.claves().CrearIt();
+		Lista<NombreTabla>::Iterador itNom = InfoT.Joins.DiccClaves().CrearIt();
 
 		while(itNom.HaySiguiente()){
 			InfoJoin InfoJ = InfoT.Joins.Significado(itNom.Siguiente());
@@ -207,7 +209,7 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 	NombreCampo CampoJ = c;
 
-	Dicc/*String*/<String, Conj<Registro>::Iterador> JoinS = Dicc/*String*/<String, Conj<Registro>::Iterador>();
+	DiccLex<Conj<Registro>::Iterador> JoinS = DiccLex<Conj<Registro>::Iterador>();
 	DiccNat<Conj<Registro>::Iterador> JoinN = DiccNat<Conj<Registro>::Iterador>();
 
 	Conj<Registro> JoinC = Conj<Registro>();
@@ -223,7 +225,7 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 	Conj<Dato>::Iterador itcjd1 = cjd1.CrearIt();
 
-	Dicc/*String*/<String, bool> ds = Dicc/*String*/<String, bool>();
+	DiccLex<bool> ds = DiccLex<bool>();
 	DiccNat<bool> dn = DiccNat<bool>();
 
 	Conj<Dato> cjD = Conj<Dato>();
@@ -277,7 +279,7 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 		while(its.HaySiguiente())
 		{
-			Registro regModelo = Dicc/*String*/<NombreCampo, Dato>();
+			Registro regModelo = DiccLex<Dato>();
 
 			regModelo.Definir(c, its.Siguiente());
 
@@ -289,12 +291,12 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 			if(!CampoT)
 			{
-				Conj<Registro>::Iterador itnuevo = JoinC.AgregarRapido(r1/*.UnirRegistros(r2)*/);
+				Conj<Registro>::Iterador itnuevo = JoinC.AgregarRapido(r1.UnirRegistros(c, r2));
 				JoinS.Definir(its.Siguiente().valorString(), itnuevo);
 
 			}else
 			{
-				Conj<Registro>::Iterador itnuevo = JoinC.AgregarRapido(r1/*.UnirRegistros(r2)*/);
+				Conj<Registro>::Iterador itnuevo = JoinC.AgregarRapido(r1.UnirRegistros(c, r2));
 				JoinN.Definir(its.Siguiente().valorNat(), itnuevo);
 			}
 
@@ -313,12 +315,12 @@ void Base::BorrarJoin(const NombreTabla t1, const NombreTabla t2)
 	this->Tablas.Significado(t2).Joins.Borrar(t1);
 };
 
-Conj<Base::Registro> Base::Registros(const NombreTabla t)
+Conj<Registro> Base::Registros(const NombreTabla t)
 {
 	return this->Tablas.Significado(t).TActual.registros();
 };
 
-Conj<Base::Registro> Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
+Conj<Registro> Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 {
 	InfoTabla InfoT1 = this->Tablas.Significado(t1);
 	Tabla Ta1 = InfoT1.TActual;
@@ -354,7 +356,7 @@ Conj<Base::Registro> Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 				Dicc<NombreCampo, Dato> regModelo = Dicc<NombreCampo, Dato>();
 				regModelo.Definir(c, r.Significado(c));
 
-				Registro ROtro = Dicc/*String*/<NombreCampo, Dato>();
+				Registro ROtro = DiccLex<Dato>();
 
 				if(NomTOrigen==t1)
 				{
@@ -363,7 +365,7 @@ Conj<Base::Registro> Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 					ROtro = Ta1.buscarEnTabla(regModelo).CrearIt().Siguiente().Siguiente();
 				}
 
-				if(ROtro.CantClaves()!=0){
+				if(!ROtro.Campos().EsVacio()){
 					// Registro RNuevo = UnirRegistros(r, ROtro);
 					Registro RNuevo = r;
 
@@ -406,7 +408,7 @@ const NombreTabla Base::TablaMaxima()
 };
 
 
-Conj<Conj<Base::Registro>::Iterador> Base::Buscar(const Registro c, const NombreTabla t)
+Conj<Conj<Registro>::Iterador> Base::Buscar(const Registro c, const NombreTabla t)
 {
 	return this->Tablas.Significado(t).TActual.buscarEnTabla(c);
 };

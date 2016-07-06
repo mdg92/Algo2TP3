@@ -5,7 +5,7 @@
 #include "aed2\Conj.h"
 #include "aed2\TiposBasicos.h"
 
-namespace aed2{
+using namespace aed2;
 
 Dato::Dato(const Dato& a){
 	this->tipo_=a.tipo();
@@ -107,7 +107,7 @@ const bool Dato::operator ==(const Dato& b)const{
 };
 
 
-}; // fin namespame aed2
+
 
 //int main(){
 //	aed2::Dato s1("a");

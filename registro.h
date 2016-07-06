@@ -17,7 +17,7 @@ class Registro
   	//DiccLex();
   	//~DiccLex();
   	//DiccLex(const Registro&);
-  	void Definir(NombreCampo, Dato&);
+  	void Definir(NombreCampo, Dato);
   	bool Definido(NombreCampo);
   	void Borrar(NombreCampo);
   	Dato& Significado(NombreCampo);
@@ -39,13 +39,13 @@ class Registro
 
 
 
-void Registro::Definir(NombreCampo s, Dato& d){
+void Registro::Definir(NombreCampo s, Dato d){
 	this->base.Definir(s,d);
 };
 
 
 bool Registro::Definido(NombreCampo s){
-	this->base.Definido(s);
+	return this->base.Definido(s);
 };
 
 
@@ -114,7 +114,7 @@ Registro Registro::CombinarTodos(NombreCampo c, Conj<Registro> cr){
 	bool f=true;
 	Registro* res;
 	while(f && it.HaySiguiente()){
-		if (this->Significado(c)==(it.Siguiente()).Significado(c)){
+		if (this->Significado(c)==it.Siguiente().Significado(c)){
 			res= &(this->UnirRegistros(c, it.Siguiente()));
 			f=false;
 		}
