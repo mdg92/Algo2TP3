@@ -23,8 +23,8 @@ class DiccLex
   	void Borrar(String);
   	S& Significado(String);
   	S& Significado(String) const;
-  	const Conj<String>& DiccClaves();
-  	const Conj<String>& DiccClaves() const;
+  	Conj<String>& DiccClaves();
+  	 Conj<String>& DiccClaves() const;
   	String Maximo();
   	String Maximo()const;
   	String Minimo();
@@ -185,7 +185,12 @@ S& DiccLex<S>::Significado(String s) const{
 
 
 template<typename S>
-const Conj<String>& DiccLex<S>::DiccClaves(){
+Conj<String>& DiccLex<S>::DiccClaves(){
+	return this->_claves;
+};
+
+template<typename S>
+Conj<String>& DiccLex<S>::DiccClaves() const{
 	return this->_claves;
 };
 

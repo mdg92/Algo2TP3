@@ -20,12 +20,18 @@ class Registro
   	//DiccLex(const Registro&);
   	void Definir(NombreCampo, Dato);
   	bool Definido(NombreCampo);
+  	bool Definido(NombreCampo) const;
   	void Borrar(NombreCampo);
   	Dato& Significado(NombreCampo);
   	Conj<NombreCampo> Campos();
   	NombreCampo Maximo();
   	NombreCampo Minimo();
+  	Dato& Significado(NombreCampo) const;
+  	Conj<NombreCampo> Campos() const;
+  	NombreCampo Maximo() const;
+  	NombreCampo Minimo() const;
   	bool BorrarPreg(Registro);
+  	bool BorrarPreg(Registro) const;
   	bool EnTodos(NombreCampo, Conj<Registro>);
   	bool CoincideAlguno(Conj<NombreCampo>,  Registro);
   	bool CoincidenTodos(Conj<NombreCampo>,  Registro);
@@ -51,6 +57,13 @@ void Registro::Definir(NombreCampo s, Dato d){
 bool Registro::Definido(NombreCampo s){
 	return this->base.Definido(s);
 };
+
+
+bool Registro::Definido(NombreCampo s) const{
+	return this->base.Definido(s);
+};
+
+
 
 
 void Registro::Borrar(NombreCampo s){

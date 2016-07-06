@@ -1,9 +1,6 @@
 #include "Dato.h"
 #include <cassert>
-#include "Tipos.h"
-#include "aed2\Dicc.h"
-#include "aed2\Conj.h"
-#include "aed2\TiposBasicos.h"
+
 
 using namespace aed2;
 
