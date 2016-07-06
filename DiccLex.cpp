@@ -43,6 +43,7 @@ int main(){
 	p.Borrar("ahra");
 	std::cout<<p.DiccClaves()<<"\n";
 	std::cout<<p.Significado(p.Minimo())<<"\n";
+	return 3;
 
 
 };

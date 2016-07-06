@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include "DiccLex.h"
+#include "Dato.h"
+#include "Tipos.h"
 
 
 namespace aed2
