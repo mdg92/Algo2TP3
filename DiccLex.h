@@ -19,11 +19,16 @@ class DiccLex
   	//DiccLex(const DiccLex<S>&);
   	void Definir(String, S);
   	bool Definido(String);
+  	bool Definido(String) const;
   	void Borrar(String);
   	S& Significado(String);
+  	S& Significado(String) const;
   	const Conj<String>& DiccClaves();
+  	const Conj<String>& DiccClaves() const;
   	String Maximo();
+  	String Maximo()const;
   	String Minimo();
+  	String Minimo()const;
 
 /*
   	class Iterador{
@@ -110,6 +115,18 @@ bool DiccLex<S>::Definido(String s){
 	if(aux!=NULL) res=aux->esSig;
 	return res;
 };
+template<typename S>
+bool DiccLex<S>::Definido(String s) const{
+	Nodo* aux=this->_raiz;
+	bool res=false;
+	int i = 0;
+	while(i<(s.length()) && aux!=NULL){
+		aux=(aux->continuaciones[(unsigned char)(s[i])]);
+		i++;	
+	} 
+	if(aux!=NULL) res=aux->esSig;
+	return res;
+};
 
 
 template<typename S>
@@ -154,6 +171,17 @@ S& DiccLex<S>::Significado(String s){
 	return *(aux->dato);
 
 };
+template<typename S>
+S& DiccLex<S>::Significado(String s) const{
+	Nodo* aux=this->_raiz;
+	int i =0;
+	while (i<s.length()){
+		aux=aux->continuaciones[(unsigned char)(s[i])];
+		i++;
+	}
+	return *(aux->dato);
+
+};
 
 
 template<typename S>
@@ -185,6 +213,47 @@ String DiccLex<S>::Maximo(){
 
 template<typename S>
 String DiccLex<S>::Minimo(){
+	Nodo* aux=this->_raiz;
+	String res;
+	res.clear();
+	int i=0;
+	while(i<256){
+		if (aux->continuaciones[i]==NULL){
+			i++;
+		}
+		else {
+			res.push_back((char) i);
+			aux=aux->continuaciones[i];
+			i=0;
+		}
+
+	}
+	return res;
+};
+
+template<typename S>
+String DiccLex<S>::Maximo() const{
+	Nodo* aux=this->_raiz;
+	String res;
+	res.clear();
+	int i=255;
+	while(i>-1){
+		if (aux->continuaciones[i]==NULL){
+			i--;
+		}
+		else {
+			res.push_back((char) i);
+			aux=aux->continuaciones[i];
+			i=255;
+		}
+
+	}
+	return res;
+};
+
+
+template<typename S>
+String DiccLex<S>::Minimo() const{
 	Nodo* aux=this->_raiz;
 	String res;
 	res.clear();
