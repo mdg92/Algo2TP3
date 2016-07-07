@@ -173,12 +173,12 @@ Tabla::Tabla(const Tabla& t){
 }
 */
 
-Tabla::~Tabla(){}
+Tabla::~Tabla(){};
 
 void Tabla::agregarRegistro(const Registro registro_){
-	cantAccesos++;
+	this->cantAccesos++;
 	//Registro reg = Registro(registro_);
-	Conj<Registro>::Iterador nuevo= Registros_.Agregar(registro_);
+	Conj<Registro>::Iterador nuevo= this->Registros_.Agregar(registro_);
 	bool TipoRelacion=Campos_.Significado(CampoR);
 	Acceso a;
 	if(this->indices().Cardinal()>0){
@@ -298,7 +298,7 @@ const aed2::Conj<aed2::NombreCampo > Tabla::indices()const{
 }
 
 
-const aed2::Conj<Registro>& Tabla::registros()const{
+const Conj<Registro>& Tabla::registros() const{
 	return this->Registros_;
 }
 
@@ -446,31 +446,31 @@ void Tabla::indexar(const NombreCampo campo)
 			SS=IndiceDS.Significado(valor).Agregar(itreg);
 		}
 		if(this->tipoCampo(CampoR)){
-			if(!ConsultaN.Definido(R.Significado(CampoR).valorNat())){
+			if(!this->ConsultaN.Definido(R.Significado(CampoR).valorNat())){
 				Acceso acceso_;
 				acceso_.N=NN;
 				acceso_.S=SS;
-				ConsultaN.Definir(R.Significado(CampoR).valorNat(), acceso_);
+				this->ConsultaN.Definir(R.Significado(CampoR).valorNat(), acceso_);
 			}else{
 				if(!IndiceN.EnUso){
-					ConsultaN.Significado(R.Significado(CampoR).valorNat()).N=NN;
+					this->ConsultaN.Significado(R.Significado(CampoR).valorNat()).N=NN;
 				}
 				if(!IndiceS.EnUso){
-					ConsultaS.Significado(R.Significado(CampoR).valorString()).S=SS;
+					this->ConsultaS.Significado(R.Significado(CampoR).valorString()).S=SS;
 				}
 			}
 		}else{
-			if(!ConsultaS.Definido(R.Significado(CampoR).valorString())){
+			if(!this->ConsultaS.Definido(R.Significado(CampoR).valorString())){
 				Acceso acceso_;
 				acceso_.N=NN;
 				acceso_.S=SS;
-				ConsultaS.Definir(R.Significado(CampoR).valorString(), acceso_);
+				this->ConsultaS.Definir(R.Significado(CampoR).valorString(), acceso_);
 			}else{
 				if(!IndiceN.EnUso){
-					ConsultaN.Significado(R.Significado(CampoR).valorNat()).N=NN;
+					this->ConsultaN.Significado(R.Significado(CampoR).valorNat()).N=NN;
 				}
 				if(!IndiceS.EnUso){
-					ConsultaS.Significado(R.Significado(CampoR).valorString()).S=SS;
+					this->ConsultaS.Significado(R.Significado(CampoR).valorString()).S=SS;
 				}
 			}
 		}
@@ -622,7 +622,7 @@ bool Tabla::mismosTipos(const Registro reg)const{
 	return valor;
 };
 
-Conj<Conj<Registro >::Iterador > Tabla::buscarEnTabla(const Registro criterio)const{
+Conj<Conj<Registro>::Iterador> Tabla::buscarEnTabla(const Registro criterio)const{
 	Conj<NombreCampo>::Iterador itcampos=this->Campos_.DiccClaves().CrearIt();
 	bool Encontrado=false;
 	NombreCampo EncontradoCampoInd;
@@ -659,9 +659,9 @@ Conj<Conj<Registro >::Iterador > Tabla::buscarEnTabla(const Registro criterio)co
 }
 
 
-Conj<Dato > dameColumna(const NombreCampo campo, const Conj<Registro > cr)const{
+Conj<Dato>& dameColumna(const NombreCampo campo, const Conj<Registro > cr)const{
 	assert(!cr.EsVacio());
-	Conj<Dato > res;
+	Conj<Dato> res = Conj<Dato>();
 	Conj<Registro >::const_Iterador it=cr.CrearIt();
 	Tipo Tvalor=it.Siguiente().Significado(campo).tipo();
 	if(Tvalor){
@@ -670,7 +670,7 @@ Conj<Dato > dameColumna(const NombreCampo campo, const Conj<Registro > cr)const{
 			bolsaN.Definir(it.Siguiente().Significado(campo).valorNat(),it.Siguiente().Significado(campo));
 			it.Avanzar();
 		}
-		aed2::Lista<Nat >::Iterador itN=bolsaN.DiccClaves().CrearIt();
+		Lista<Nat>::Iterador itN=bolsaN.DiccClaves().CrearIt();
 		while(itN.HaySiguiente()){
 			res.AgregarRapido(bolsaN.Significado(itN.Siguiente()));
 			itN.Avanzar();
