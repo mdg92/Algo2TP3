@@ -59,7 +59,7 @@ class Tabla
 
     Conj<Conj<Registro >::Iterador > coincidencias(const Registro crit, const Conj<Registro >);
 
-    const Conj<Registro>& combinarRegistros(const NombreCampo campo, const Conj<Registro > cr1, const Conj<Registro > cr2);
+    Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > cr1, const Conj<Registro > cr2);
 
     const Conj<Dato>& dameColumna(const NombreCampo campo, const Conj<Registro > cr)const;
 
@@ -558,64 +558,72 @@ Conj<Conj<Registro >::Iterador > Tabla::coincidencias(const Registro crit, Conj<
 		itcr.Avanzar();
 	}
 	return salida;
-}
+};
 
-const Conj<Registro >& combinarRegistros(const NombreCampo campo, const Conj<Registro > cr1, const Conj<Registro > cr2){
-	Conj<Registro > res;
-	Conj<Registro >::const_Iterador itcr1=cr1.CrearIt();
-	if(cr2.Cardinal()>0){
-		Registro rtemp=cr2.CrearIt().Siguiente();
-		Tipo rac=rtemp.Significado(campo).tipo();
-		if(rac){
+Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > cr1, const Conj<Registro > cr2){
+	Conj<Registro> res;
+	Conj<Registro >::const_Iterador itcr2=cr2.CrearIt();
+	if(cr1.Cardinal()>0){
+		Tipo rac=itcr2.Siguiente().Significado(campo).tipo();
+		if(rac==NAT){
 			// caso Nat
-			Dicc/*Nat*/<Nat, Conj<Registro > > d;
-			Conj<Registro >::const_Iterador itcr2=cr2.CrearIt();
+			DiccNat<Registro > d;
+			Conj<Registro>::const_Iterador itaux=cr1.CrearIt();
+			while(itaux.HaySiguiente()){
+				d.Definir(itaux.Siguiente().Significado(campo).valorNat(), itaux.Siguiente());
+			}
 			while(itcr2.HaySiguiente()){
-				Dato valor=itcr2.Siguiente().Significado(campo);
-				if(!d.Definido(valor.valorNat())){
-					Conj<Registro > cjNuevo;
-					d.Definir(valor.valorNat(),cjNuevo);
+				if(d.Definido(itcr2.Siguiente().Significado(campo).valorNat())){
+					Registro regaux;
+					Conj<Campo>::Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
+
+					while(icnj.HaySiguiente()){
+						regaux.Definir(icnj.Siguiente(),itcr2.Siguiente().Significado(icnj.Siguiente()));
+						icnj.Avanzar();
+					}
+					res.AgregarRapido(regaux.UnirRegistros(campo,d.Significado(regaux.Significado(campo).valorNat())));
 				}
-				d.Significado(valor.valorNat()).AgregarRapido(itcr2.Siguiente());
 				itcr2.Avanzar();
 			}
 		}else{
 			// caso String
-			Dicc/*String*/<String, Conj<Registro > > d;
-			Conj<Registro >::const_Iterador itcr2=cr2.CrearIt();
-			while(itcr2.HaySiguiente()){
-				Dato valor=itcr2.Siguiente().Significado(campo);
-				if(!d.Definido(valor.valorString())){
-					Conj<Registro > cjNuevo;
-					d.Definir(valor.valorString(),cjNuevo);
-				}
-				d.Significado(valor.valorString()).AgregarRapido(itcr2.Siguiente());
-				itcr2.Avanzar();
+			DiccLex<Registro > d;
+			Conj<Registro>::const_Iterador itaux=cr1.CrearIt();
+			while(itaux.HaySiguiente()){
+				d.Definir(itaux.Siguiente().Significado(campo).valorString(), itaux.Siguiente());
 			}
-		}
-		Conj<Registro >::const_Iterador itcr1=cr1.CrearIt();
-		while(itcr1.HaySiguiente()){
-			res.AgregarRapido(itcr1.Siguiente().CombinarTodos(campo,cr2));
-			itcr1.Avanzar();
+			while(itcr2.HaySiguiente()){
+				if(d.Definido(itcr2.Siguiente().Significado(campo).valorString())){
+					Registro regaux;
+					Conj<Campo>::Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
+					while(icnj.HaySiguiente()){
+						regaux.Definir(icnj.Siguiente(),itcr2.Siguiente().Significado(icnj.Siguiente()));
+						icnj.Avanzar();
+					}
+					res.AgregarRapido(regaux.UnirRegistros(campo,d.Significado(regaux.Significado(campo).valorString())));
+				}
+				itcr2.Avanzar();
 		}
 	}
+	}
 	return res;
-}
+};
 
 bool Tabla::mismosTipos(const Registro reg)const{
 	bool valor=true;
-	Conj<NombreCampo> itClaves=reg.Campos().CrearIt();
+	Conj<NombreCampo>::Iterador itClaves=reg.Campos().CrearIt();
+	Conj<NombreCampo>::Iterador itCampos=this->Campos_.DiccClaves().CrearIt();
 	while(valor && itClaves.HaySiguiente()){
-		bool val1=reg.Significado(itClaves.Siguiente());
-		bool val2=this->tipoCampo(itCampos.Siguiente());
-		bool valor=(val1==val2);
+		bool val1=reg.Significado(itClaves.Siguiente()).EsNat();
+		bool val2=(this->tipoCampo(itCampos.Siguiente()))==NAT;
+		valor=(val1==val2);
 		itClaves.Avanzar();
 	}
 	return valor;
 };
 
 Conj<Conj<Registro >::Iterador > Tabla::buscarEnTabla(const Registro criterio)const{
-	Conj<NombreCampo > itcampos=Campos_.DiccClaves().CrearIt();
+	Conj<NombreCampo>::Iterador itcampos=this->Campos_.DiccClaves().CrearIt();
 	bool Encontrado=false;
 	NombreCampo EncontradoCampoInd;
 	Conj<NombreCampo > cj;
@@ -651,29 +659,29 @@ Conj<Conj<Registro >::Iterador > Tabla::buscarEnTabla(const Registro criterio)co
 }
 
 
-const Conj<Dato >& dameColumna(const NombreCampo campo, const Conj<Registro > cr)const{
+Conj<Dato > dameColumna(const NombreCampo campo, const Conj<Registro > cr)const{
 	assert(!cr.EsVacio());
 	Conj<Dato > res;
 	Conj<Registro >::const_Iterador it=cr.CrearIt();
 	Tipo Tvalor=it.Siguiente().Significado(campo).tipo();
 	if(Tvalor){
-		Dicc/*Nat*/<Nat, Dato > bolsaN;
+		DiccNat< Dato > bolsaN;
 		while(it.HaySiguiente()){
 			bolsaN.Definir(it.Siguiente().Significado(campo).valorNat(),it.Siguiente().Significado(campo));
 			it.Avanzar();
 		}
-		aed2::Lista<Nat >::Iterador itN=bolsaN.diccClaves();
+		aed2::Lista<Nat >::Iterador itN=bolsaN.DiccClaves().CrearIt();
 		while(itN.HaySiguiente()){
 			res.AgregarRapido(bolsaN.Significado(itN.Siguiente()));
 			itN.Avanzar();
 		}
 	}else{
-		Dicc/*String*/<String, Dato > bolsaS;
+		DiccLex<Dato > bolsaS;
 		while(it.HaySiguiente()){
 			bolsaS.Definir(it.Siguiente().Significado(campo).valorString(),it.Siguiente().Significado(campo));
 			it.Avanzar();
 		}
-		aed2::Conj<String >::Iterador itS=bolsaS.diccClaves();
+		aed2::Conj<String >::Iterador itS=bolsaS.DiccClaves().CrearIt();
 		while(itS.HaySiguiente()){
 			res.AgregarRapido(bolsaS.Significado(itS.Siguiente()));
 			itS.Avanzar();
