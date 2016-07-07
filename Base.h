@@ -138,8 +138,8 @@ void Base::InsertarEntrada(const Registro r, const NombreTabla t)
 
 	if(InfoT->Joins.DiccClaves().EsVacio())
 	{
-		//Conj<NombreTabla>::Iterador NomTab = InfoT.Joins.Claves().CrearIt();
-		Lista<NombreTabla>::Iterador NomTab = InfoT->Joins.DiccClaves().CrearIt();
+
+		Conj<NombreTabla>::Iterador NomTab = InfoT->Joins.DiccClaves().CrearIt();
 
 		while(NomTab.HaySiguiente()){
 
@@ -164,9 +164,9 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 {
 	InfoTabla InfoT = this->Tablas.Significado(t);
 
-	if(InfoT.Joins.DiccClaves().EsVacio() /*InfoT.Joins.Vacio()*/)
+	if(InfoT.Joins.DiccClaves().EsVacio())
 	{
-		Lista<NombreTabla>::Iterador itNom = InfoT.Joins.DiccClaves().CrearIt();
+		Conj<NombreTabla>::Iterador itNom = InfoT.Joins.DiccClaves().CrearIt();
 
 		while(itNom.HaySiguiente()){
 			InfoJoin InfoJ = InfoT.Joins.Significado(itNom.Siguiente());
@@ -279,7 +279,7 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 		while(its.HaySiguiente())
 		{
-			Registro regModelo = DiccLex<Dato>();
+			Registro regModelo = Registro();
 
 			regModelo.Definir(c, its.Siguiente());
 
@@ -353,10 +353,10 @@ Conj<Registro> Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 			if(data.Accion)
 			{
 				NombreTabla NomTOrigen = data.NomOrigen;
-				Dicc<NombreCampo, Dato> regModelo = Dicc<NombreCampo, Dato>();
+				Registro regModelo = Registro();
 				regModelo.Definir(c, r.Significado(c));
 
-				Registro ROtro = DiccLex<Dato>();
+				Registro ROtro = Registro();
 
 				if(NomTOrigen==t1)
 				{
