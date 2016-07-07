@@ -22,6 +22,8 @@ class Base
 
 	Base();
 
+	~Base();
+
 	Conj<NombreTabla>::Iterador DameTablas();
 
 	Tabla& DameTabla(const NombreTabla);
@@ -103,6 +105,12 @@ Base::Base()
 	this->TabMaxima = Tmax();
 	this->Tablas = DiccLex<InfoTabla>();
 };
+
+Base::~Base()
+{
+
+};
+
 
 Conj<NombreTabla>::Iterador Base::DameTablas()
 {
