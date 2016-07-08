@@ -24,13 +24,13 @@ class Base
 
 	~Base();
 
-	Conj<NombreTabla>::Iterador DameTablas();
+	Conj<NombreTabla>::Iterador DameTablas() const;
 
-	Tabla& DameTabla(const NombreTabla);
+	Tabla& DameTabla(const NombreTabla) const;
 
-	bool HayJoin(const NombreTabla, const NombreTabla);
+	bool HayJoin(const NombreTabla, const NombreTabla) const;
 
-	NombreCampo CampoJoin(const NombreTabla, const NombreTabla);
+	NombreCampo CampoJoin(const NombreTabla, const NombreTabla) const;
 
 	void AgregarTabla(const Tabla&);
 
@@ -42,17 +42,15 @@ class Base
 
 	void BorrarJoin(const NombreTabla, const NombreTabla);
 
-	Conj<Registro> Registros(const NombreTabla);
+	Conj<Registro>& Registros(const NombreTabla) const;
 
-	Conj<Registro> VistaJoin(const NombreTabla, const NombreTabla);
+	Conj<Registro>& VistaJoin(const NombreTabla, const NombreTabla);
 
 	int CantidadDeAccesos(const NombreTabla) const;
 
-	const NombreTabla TablaMaxima();
+	const NombreTabla TablaMaxima() const;
 
-	const NombreTabla EncontrarMaximo(const NombreTabla, const Conj<NombreTabla>);
-
-	Conj<Conj<Registro>::Iterador> Buscar(const Registro, const NombreTabla);
+	Conj<Conj<Registro>::Iterador> Buscar(const Registro, const NombreTabla) const;
 
 
 
@@ -112,23 +110,23 @@ Base::~Base()
 };
 
 
-Conj<NombreTabla>::Iterador Base::DameTablas()
+Conj<NombreTabla>::Iterador Base::DameTablas() const
 {
 	//return this->Tablas.claves().CrearIt();
 	return this->Tablas.DiccClaves().CrearIt();
 };
 
-Tabla& Base::DameTabla(const NombreTabla t)
+Tabla& Base::DameTabla(const NombreTabla t) const
 {
 	return this->Tablas.Significado(t).TActual;
 };
 
-bool Base::HayJoin(const NombreTabla t1, const NombreTabla t2)
+bool Base::HayJoin(const NombreTabla t1, const NombreTabla t2) const
 {
 	return this->Tablas.Significado(t1).Joins.Definido(t2) && this->Tablas.Significado(t2).Joins.Definido(t1);
 };
 
-NombreCampo Base::CampoJoin(const NombreTabla t1, const NombreTabla t2)
+NombreCampo Base::CampoJoin(const NombreTabla t1, const NombreTabla t2) const
 {
 	return this->Tablas.Significado(t1).Joins.Significado(t2).CampoJ;
 };
@@ -323,20 +321,20 @@ void Base::BorrarJoin(const NombreTabla t1, const NombreTabla t2)
 	this->Tablas.Significado(t2).Joins.Borrar(t1);
 };
 
-Conj<Registro> Base::Registros(const NombreTabla t)
+Conj<Registro>& Base::Registros(const NombreTabla t) const
 {
 	return this->Tablas.Significado(t).TActual.registros();
 };
 
-Conj<Registro> Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
+Conj<Registro>& Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 {
-	InfoTabla InfoT1 = this->Tablas.Significado(t1);
+	InfoTabla& InfoT1 = this->Tablas.Significado(t1);
 	Tabla Ta1 = InfoT1.TActual;
 
-	InfoTabla InfoT2 = this->Tablas.Significado(t2);
+	InfoTabla& InfoT2 = this->Tablas.Significado(t2);
 	Tabla Ta2 = InfoT2.TActual;
 
-	InfoJoin InfoJ = InfoT1.Joins.Significado(t2);
+	InfoJoin& InfoJ = InfoT1.Joins.Significado(t2);
 
 	NombreCampo c = InfoJ.CampoJ;
 
@@ -410,13 +408,13 @@ int Base::CantidadDeAccesos(const NombreTabla t) const
 	return this->Tablas.Significado(t).TActual.cantidadDeAccesos();
 };
 
-const NombreTabla Base::TablaMaxima()
+const NombreTabla Base::TablaMaxima() const
 {
 	return this->TabMaxima.NomTabla;
 };
 
 
-Conj<Conj<Registro>::Iterador> Base::Buscar(const Registro c, const NombreTabla t)
+Conj<Conj<Registro>::Iterador> Base::Buscar(const Registro c, const NombreTabla t) const
 {
 	return this->Tablas.Significado(t).TActual.buscarEnTabla(c);
 };
