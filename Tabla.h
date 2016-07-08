@@ -27,7 +27,7 @@ class Tabla
 
     const Conj<NombreCampo> campos()const;
 
-    const Tipo tipoCampo(NombreCampo c) const;
+    const Tipo tipoCampo(NombreCampo) const;
 
     const Conj<Registro>& registros()const;
 
@@ -41,31 +41,31 @@ class Tabla
 
     ~Tabla();
 
-    void agregarRegistro(const Registro reg);
+    void agregarRegistro(const Registro);
 
-    void borrarRegistro(const Registro registro_);
+    void borrarRegistro(const Registro);
 
-    void indexar(const NombreCampo c);
+    void indexar(const NombreCampo);
 
-    bool puedoInsertar(const Registro r) const;
+    bool puedoInsertar(const Registro) const;
 
-    const Dato& minimo(const NombreCampo columna) const;
+    const Dato& minimo(const NombreCampo) const;
 
-    const Dato& maximo(const NombreCampo columna) const;
+    const Dato& maximo(const NombreCampo) const;
 
-    bool puedeIndexar(const NombreCampo c)const;
+    bool puedeIndexar(const NombreCampo)const;
 
-    bool hayCoincidencia(const Registro reg, const Conj<NombreCampo > cjcampo, const Conj<Registro > cjreg)const;
+    bool hayCoincidencia(const Registro, const Conj<NombreCampo>, const Conj<Registro > )const;
 
-    Conj<Conj<Registro >::Iterador > coincidencias(const Registro crit, const Conj<Registro >) const;
+    Conj<Conj<Registro >::Iterador > coincidencias(const Registro, const Conj<Registro >) const;
 
-    Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > cr1, const Conj<Registro > cr2);
+    Conj<Registro> combinarRegistros(const NombreCampo, const Conj<Registro>, const Conj<Registro>);
 
-    const Conj<Dato> dameColumna(const NombreCampo campo, const Conj<Registro > cr)const;
+    const Conj<Dato> dameColumna(const NombreCampo, const Conj<Registro>)const;
 
-    bool mismosTipos(const Registro reg) const;
+    bool mismosTipos(const Registro) const;
 
-    Conj<Conj<Registro>::Iterador> buscarEnTabla(const Registro criterio)const;
+    Conj<Conj<Registro>::Iterador> buscarEnTabla(const Registro)const;
 
   private:
 	NombreTabla Nombre_;
