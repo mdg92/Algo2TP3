@@ -37,12 +37,24 @@ class Registro
   	bool CoincidenTodos(Conj<NombreCampo>,  Registro) const;
   	Registro UnirRegistros(NombreCampo,  Registro);
   	Registro CombinarTodos(NombreCampo, Conj<Registro>);
-
+  	bool operator==(const Registro)const;
   private:
   	DiccLex<Dato> base;
 
 
 };
+bool Registro::operator==(const Registro otro)const{
+	bool respuesta=this->Campos()==otro.Campos();
+	if(respuesta){
+		Conj<NombreCampo>::Iterador it=this->Campos().CrearIt();
+		while(respuesta and it.HaySiguiente()){
+			respuesta=this->Significado(it.Siguiente())==otro.Significado(it.Siguiente());
+			it.Avanzar();
+		}
+	}
+	return respuesta;
+};
+
 
 Registro::Registro(){
 	this->base=DiccLex<Dato>();
