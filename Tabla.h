@@ -595,7 +595,7 @@ Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > 
 			while(itcr2.HaySiguiente()){
 				if(d.Definido(itcr2.Siguiente().Significado(campo).valorString())){
 					Registro regaux;
-					Conj<Campo>::Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
+					Conj<NombreCampo>::Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
 					while(icnj.HaySiguiente()){
 						regaux.Definir(icnj.Siguiente(),itcr2.Siguiente().Significado(icnj.Siguiente()));
 						icnj.Avanzar();
