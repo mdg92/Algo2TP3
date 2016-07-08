@@ -20,7 +20,7 @@ class DiccNat
     void Definir(const Nat& clave, const S& significado);
     //void DefinirRapido(const Nat& clave, const S& significado);
     bool Definido(const Nat& clave) const;
-    S& Significado(const Nat& clave);
+   // S& Significado(const Nat& clave);
     S& Significado(const Nat&) const;
     void Borrar(const Nat& clave);
     Lista<Nat>& DiccClaves();
@@ -190,7 +190,7 @@ bool DiccNat<S>::Definido(const Nat& clave) const
 	return res;
 }
 
-
+/*
 template<typename S>
 S& DiccNat<S>::Significado(const Nat& clave)
 {
@@ -213,7 +213,7 @@ S& DiccNat<S>::Significado(const Nat& clave)
 		}
 
 	return actual->significado;
-};
+};*/
 
 template<typename S>
 S& DiccNat<S>::Significado(const Nat& clave) const

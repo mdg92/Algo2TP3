@@ -29,7 +29,7 @@ class Tabla
 
     const Tipo tipoCampo(NombreCampo) const;
 
-    const Conj<Registro>& registros()const;
+    const Conj<Registro>& registros() const;
 
     Nat cantidadDeAccesos() const;
 
@@ -41,7 +41,7 @@ class Tabla
 
     ~Tabla();
 
-    void agregarRegistro(const Registro);
+   void agregarRegistro(const Registro);
 
     void borrarRegistro(const Registro);
 
