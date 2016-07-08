@@ -23,8 +23,8 @@ class DiccLex
   	void Borrar(String);
   	S& Significado(String);
   	S& Significado(String) const;
-  	Conj<String>& DiccClaves();
-  	 Conj<String>& DiccClaves() const;
+  	Conj<String> DiccClaves();
+  	 Conj<String> DiccClaves() const;
   	String Maximo();
   	String Maximo()const;
   	String Minimo();
@@ -75,7 +75,8 @@ template<typename S>
 void DiccLex<S>::Definir(String s, S d){
 	Nodo** aux=&this->_raiz;
 	int i = 0;
-	while(i<(s.length())){
+	int sl = s.length();
+	while(i<(sl)){
 		if(*aux==NULL){
 			(*aux)= new Nodo;
 			(*aux)->esSig=false;
@@ -108,7 +109,8 @@ bool DiccLex<S>::Definido(String s){
 	Nodo* aux=this->_raiz;
 	bool res=false;
 	int i = 0;
-	while(i<(s.length()) && aux!=NULL){
+	int sl = s.length();
+	while(i<sl && aux!=NULL){
 		aux=(aux->continuaciones[(unsigned char)(s[i])]);
 		i++;	
 	} 
@@ -120,7 +122,8 @@ bool DiccLex<S>::Definido(String s) const{
 	Nodo* aux=this->_raiz;
 	bool res=false;
 	int i = 0;
-	while(i<(s.length()) && aux!=NULL){
+	int sl = s.length();
+	while(i<sl && aux!=NULL){
 		aux=(aux->continuaciones[(unsigned char)(s[i])]);
 		i++;	
 	} 
@@ -134,7 +137,8 @@ void DiccLex<S>::Borrar(String s){
 	Nodo* aux = this->_raiz;
 	int i =0;
 	Lista<Nodo*> l;
-	while(i<s.length()){
+	int sl = s.length();
+	while(i<sl){
 		l.AgregarAdelante(aux);
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
@@ -164,7 +168,8 @@ template<typename S>
 S& DiccLex<S>::Significado(String s){
 	Nodo* aux=this->_raiz;
 	int i =0;
-	while (i<s.length()){
+	int sl = s.length();
+	while (i<sl){
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
 	}
@@ -175,7 +180,8 @@ template<typename S>
 S& DiccLex<S>::Significado(String s) const{
 	Nodo* aux=this->_raiz;
 	int i =0;
-	while (i<s.length()){
+	int sl = s.length();
+	while (i<sl){
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
 	}
@@ -185,12 +191,12 @@ S& DiccLex<S>::Significado(String s) const{
 
 
 template<typename S>
-Conj<String>& DiccLex<S>::DiccClaves(){
+Conj<String> DiccLex<S>::DiccClaves(){
 	return this->_claves;
 };
 
 template<typename S>
-Conj<String>& DiccLex<S>::DiccClaves() const{
+Conj<String> DiccLex<S>::DiccClaves() const{
 	return this->_claves;
 };
 

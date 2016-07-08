@@ -57,11 +57,11 @@ class Tabla
 
     bool hayCoincidencia(const Registro reg, const Conj<NombreCampo > cjcampo, const Conj<Registro > cjreg)const;
 
-    Conj<Conj<Registro >::Iterador > coincidencias(const Registro crit, const Conj<Registro >);
+    Conj<Conj<Registro >::Iterador > coincidencias(const Registro crit, const Conj<Registro >) const;
 
     Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > cr1, const Conj<Registro > cr2);
 
-    const Conj<Dato>& dameColumna(const NombreCampo campo, const Conj<Registro > cr)const;
+    const Conj<Dato> dameColumna(const NombreCampo campo, const Conj<Registro > cr)const;
 
     bool mismosTipos(const Registro reg) const;
 
@@ -69,7 +69,7 @@ class Tabla
 
   private:
 	NombreTabla Nombre_;
-	Conj<Registro > Registros_;
+	Conj<Registro> Registros_;
 	DiccLex<Tipo> Campos_;//String
 	Conj<NombreCampo > Claves_;
 	struct IndiceNat{
@@ -113,7 +113,7 @@ Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, con
 	cantAccesos=0;
 }*/
 
-Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, const Conj<Columna> columnas){
+Tabla::Tabla(const NombreTabla nombre, const Conj<NombreCampo> claves, const Conj<Columna> columnas){
 	Nombre_=nombre;
 	Conj<Columna>::const_Iterador it=columnas.CrearIt();
 	while(it.HaySiguiente()){
@@ -175,17 +175,17 @@ Tabla::Tabla(const Tabla& t){
 
 Tabla::~Tabla(){};
 
-void Tabla::agregarRegistro(const Registro registro_){
+void Tabla::agregarRegistro(const Registro registro){
 	this->cantAccesos++;
 	//Registro reg = Registro(registro_);
-	Conj<Registro>::Iterador nuevo= this->Registros_.Agregar(registro_);
+	Conj<Registro>::Iterador nuevo = this->Registros_.Agregar(registro);
 	bool TipoRelacion=Campos_.Significado(CampoR);
 	Acceso a;
 	if(this->indices().Cardinal()>0){
 		//Sabemos que hay algun indice
 		if(IndiceS.EnUso and IndiceN.EnUso){
 			Tabla::CjDeIteradores::Iterador itcjs;
-			aed2::String valorS= registro_.Significado(IndiceS.CampoI).valorString();
+			aed2::String valorS= registro.Significado(IndiceS.CampoI).valorString();
 			if(!IndiceDS.Definido(valorS)){
 				Tabla::CjDeIteradores cjs=IndiceDS.Significado(valorS);
 				itcjs=cjs.Agregar(nuevo);
@@ -197,7 +197,7 @@ void Tabla::agregarRegistro(const Registro registro_){
 			}
 			a.S=itcjs;
 			Tabla::CjDeIteradores::Iterador itcjn;
-			aed2::Nat valorN=registro_.Significado(IndiceN.CampoI).valorNat();
+			aed2::Nat valorN=registro.Significado(IndiceN.CampoI).valorNat();
 			if(IndiceDN.Definido(valorN)){
 				Tabla::CjDeIteradores cjn=IndiceDN.Significado(valorN);
 				itcjn=cjn.Agregar(nuevo);
@@ -209,12 +209,12 @@ void Tabla::agregarRegistro(const Registro registro_){
 			}
 			a.N=itcjn;
 			if(TipoRelacion){ //caso
-				ConsultaN.Definir(registro_.Significado(CampoR).valorNat(), a);
+				ConsultaN.Definir(registro.Significado(CampoR).valorNat(), a);
 			}else{ //caso string
-				ConsultaS.Definir(registro_.Significado(CampoR).valorString(), a);
+				ConsultaS.Definir(registro.Significado(CampoR).valorString(), a);
 			}
-			Dato valorSS=registro_.Significado(IndiceS.CampoI);
-			Dato valorNN=registro_.Significado(IndiceN.CampoI);
+			Dato valorSS=registro.Significado(IndiceS.CampoI);
+			Dato valorNN=registro.Significado(IndiceN.CampoI);
 			if(IndiceN.Max<=valorNN){
 				IndiceN.Max=valorNN;
 			}
@@ -230,7 +230,7 @@ void Tabla::agregarRegistro(const Registro registro_){
 		}else{
 			if(IndiceS.EnUso){
 				Tabla::CjDeIteradores::Iterador itcjs;
-				aed2::String valorS= registro_.Significado(IndiceS.CampoI).valorString();
+				aed2::String valorS= registro.Significado(IndiceS.CampoI).valorString();
 				if(!IndiceDS.Definido(valorS)){
 					Tabla::CjDeIteradores cjs=IndiceDS.Significado(valorS);
 					itcjs=cjs.Agregar(nuevo);
@@ -242,11 +242,11 @@ void Tabla::agregarRegistro(const Registro registro_){
 				}
 				a.S=itcjs;
 				if(TipoRelacion){ //caso
-					ConsultaN.Definir(registro_.Significado(CampoR).valorNat(), a);
+					ConsultaN.Definir(registro.Significado(CampoR).valorNat(), a);
 				}else{ //caso string
-					ConsultaS.Definir(registro_.Significado(CampoR).valorString(), a);
+					ConsultaS.Definir(registro.Significado(CampoR).valorString(), a);
 				}
-				Dato valorSS=registro_.Significado(IndiceS.CampoI);
+				Dato valorSS=registro.Significado(IndiceS.CampoI);
 				if(IndiceS.Max<=valorSS){
 					IndiceS.Max=valorSS;
 				}
@@ -256,8 +256,8 @@ void Tabla::agregarRegistro(const Registro registro_){
 			}else{
 				if(IndiceN.EnUso){
 					Tabla::CjDeIteradores::Iterador itcjn;
-					Dato valorNN=registro_.Significado(IndiceN.CampoI);
-					aed2::Nat valorN=registro_.Significado(IndiceN.CampoI).valorNat();
+					Dato valorNN=registro.Significado(IndiceN.CampoI);
+					aed2::Nat valorN=registro.Significado(IndiceN.CampoI).valorNat();
 					if(IndiceDN.Definido(valorN)){
 						Tabla::CjDeIteradores cjn=IndiceDN.Significado(valorN);
 						itcjn=cjn.Agregar(nuevo);
@@ -269,9 +269,9 @@ void Tabla::agregarRegistro(const Registro registro_){
 					}
 					a.N=itcjn;
 					if(TipoRelacion){ //caso nat
-						ConsultaN.Definir(registro_.Significado(CampoR).valorNat(), a);
+						ConsultaN.Definir(registro.Significado(CampoR).valorNat(), a);
 					}else{ //caso string
-						ConsultaS.Definir(registro_.Significado(CampoR).valorString(), a);
+						ConsultaS.Definir(registro.Significado(CampoR).valorString(), a);
 					}
 					if(IndiceN.Max<=valorNN){
 						IndiceN.Max=valorNN;
@@ -283,7 +283,7 @@ void Tabla::agregarRegistro(const Registro registro_){
 			}
 		}
 	}
-}
+};
 
 
 const aed2::Conj<aed2::NombreCampo > Tabla::indices()const{
@@ -545,14 +545,14 @@ bool Tabla::puedeIndexar(const NombreCampo c)const{
 }
 
 bool Tabla::hayCoincidencia(const Registro reg, const Conj<NombreCampo > cjcampo, const Conj<Registro > cjreg)const{
+	return true;
+};
 
-}
-
-Conj<Conj<Registro >::Iterador > Tabla::coincidencias(const Registro crit, Conj<Registro > cjreg){
+Conj<Conj<Registro >::Iterador > Tabla::coincidencias(const Registro crit, Conj<Registro > cjreg) const{
 	Conj<Conj<Registro >::Iterador > salida;
 	Conj<Registro >::Iterador itcr=cjreg.CrearIt();
 	while(itcr.HaySiguiente()){
-		if(crit.CoincidenTodos(crit.Campos(),itcr.Siguiente())){
+		if(crit.CoincidenTodos(crit.Campos(), itcr.Siguiente())){
 			salida.AgregarRapido(itcr);
 		}
 		itcr.Avanzar();
@@ -622,11 +622,12 @@ bool Tabla::mismosTipos(const Registro reg)const{
 	return valor;
 };
 
-Conj<Conj<Registro>::Iterador> Tabla::buscarEnTabla(const Registro criterio)const{
+Conj<Conj<Registro>::Iterador> Tabla::buscarEnTabla(const Registro criterio) const{
 	Conj<NombreCampo>::Iterador itcampos=this->Campos_.DiccClaves().CrearIt();
 	bool Encontrado=false;
 	NombreCampo EncontradoCampoInd;
 	Conj<NombreCampo > cj;
+	Conj<Conj<Registro>::Iterador> res;
 	while(itcampos.HaySiguiente()){
 		NombreCampo c=itcampos.Siguiente();
 		bool Def=criterio.Definido(c);
@@ -647,19 +648,21 @@ Conj<Conj<Registro>::Iterador> Tabla::buscarEnTabla(const Registro criterio)cons
 	if(Encontrado){
 		if(IndiceN.EnUso and IndiceN.CampoI==EncontradoCampoInd){
 			Nat valor=criterio.Significado(EncontradoCampoInd).valorNat();
-			return IndiceDN.Significado(valor);
+			res = this->IndiceDN.Significado(valor);
 		}
 		if(IndiceS.EnUso and IndiceS.CampoI==EncontradoCampoInd){
 			String valor=criterio.Significado(EncontradoCampoInd).valorString();
-			return IndiceDS.Significado(valor);
+			res = this->IndiceDS.Significado(valor);
 		}
 	}else{
-		return this->coincidencias(criterio, Registros_);
+		res = this->coincidencias(criterio, this->Registros_);
 	}
+
+	return res;
 }
 
 
-Conj<Dato>& dameColumna(const NombreCampo campo, const Conj<Registro > cr)const{
+const Conj<Dato> Tabla::dameColumna(const NombreCampo campo, const Conj<Registro> cr) const{
 	assert(!cr.EsVacio());
 	Conj<Dato> res = Conj<Dato>();
 	Conj<Registro >::const_Iterador it=cr.CrearIt();

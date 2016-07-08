@@ -20,9 +20,10 @@ class DiccNat
     void Definir(const Nat& clave, const S& significado);
     //void DefinirRapido(const Nat& clave, const S& significado);
     bool Definido(const Nat& clave) const;
-    const S& Significado(const Nat& clave);
+    S& Significado(const Nat& clave);
+    S& Significado(const Nat&) const;
     void Borrar(const Nat& clave);
-    Lista<Nat>& Claves();
+    Lista<Nat>& DiccClaves();
     Nat Maximo();
     Nat Minimo();
     std::ostream& mostrarDicc(std::ostream&) const;
@@ -191,7 +192,31 @@ bool DiccNat<S>::Definido(const Nat& clave) const
 
 
 template<typename S>
-const S& DiccNat<S>::Significado(const Nat& clave)
+S& DiccNat<S>::Significado(const Nat& clave)
+{
+	bool fin = true;
+
+	Nodo* actual = primero;
+
+	while(fin){
+
+			if(actual->clave==clave) {
+				fin = false;
+			}else{
+
+				if(actual->clave>clave) {
+					actual=actual->izquierda;
+				}else{
+					actual=actual->derecha;
+				}
+			}
+		}
+
+	return actual->significado;
+};
+
+template<typename S>
+S& DiccNat<S>::Significado(const Nat& clave) const
 {
 	bool fin = true;
 
@@ -288,7 +313,7 @@ void DiccNat<S>::Borrar(const Nat& clave)
 };
 
 template<typename S>
-Lista<Nat>& DiccNat<S>::Claves()
+Lista<Nat>& DiccNat<S>::DiccClaves()
 {
 	return this->claves;
 };

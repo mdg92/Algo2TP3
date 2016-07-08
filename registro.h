@@ -34,7 +34,7 @@ class Registro
   	bool BorrarPreg(Registro) const;
   	bool EnTodos(NombreCampo, Conj<Registro>);
   	bool CoincideAlguno(Conj<NombreCampo>,  Registro);
-  	bool CoincidenTodos(Conj<NombreCampo>,  Registro);
+  	bool CoincidenTodos(Conj<NombreCampo>,  Registro) const;
   	Registro UnirRegistros(NombreCampo,  Registro);
   	Registro CombinarTodos(NombreCampo, Conj<Registro>);
 
@@ -103,7 +103,7 @@ bool Registro::CoincideAlguno(Conj<NombreCampo> cc,  Registro r2){
 	while(!res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
 	return res;
 };
-bool Registro::CoincidenTodos(Conj<NombreCampo> cc,  Registro r2){
+bool Registro::CoincidenTodos(Conj<NombreCampo> cc,  Registro r2) const{
 	Conj<NombreCampo>::Iterador it =cc.CrearIt();
 	bool res=true;
 	while(res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
