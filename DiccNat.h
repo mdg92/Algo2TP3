@@ -143,13 +143,15 @@ void DiccNat<S>::Definir(const Nat& clave, const S& significado)
 						fin=false;
 					}
 					actual=actual->izquierda;
-				} else {
+				} else if(actual->clave<clave) {
 
 					if(actual->derecha == NULL){
 						actual->derecha=n;
 						fin=false;
 					}
 					actual=actual->derecha;
+				} else if (actual->clave==clave){
+					actual->significado = significado;
 				}
 
 			}
