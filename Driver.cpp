@@ -65,6 +65,7 @@ bool Driver::Dato::operator != (const Dato& otro) const
 
 Driver::Driver()
 {
+	std::cout << "Driver::Driver()" << std::endl;
   this->base = Base();
 }
 
@@ -78,16 +79,17 @@ Driver::~Driver()
 
 void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& columnas, const aed2::Conj<NombreCampo>& claves)
 {
-
+	std::cout << "Driver::crearTabla" << std::endl;
  Tabla tabla = Tabla(nombre, claves, columnas);
+ std::cout << "1" << std::endl;
   base.AgregarTabla(tabla);
-  std::cout << "creando tabla3" << std::endl;
+  std::cout << "2a" << std::endl;
 
 }
 
 void Driver::insertarRegistro(const NombreTabla& tabla, const Registro& registro)
 {
-  std::cout << "insertando" << std::endl;
+	std::cout << "Driver::insertarRegistro" << std::endl;
   aed2::Registro r;
   Dicc<NombreCampo, Dato>::const_Iterador it = registro.CrearIt();
   while (it.HaySiguiente())
@@ -108,12 +110,13 @@ void Driver::insertarRegistro(const NombreTabla& tabla, const Registro& registro
 
 void Driver::borrarRegistro(const NombreTabla& tabla, const NombreCampo& columna, const Dato& valor)
 {
-  // TODO ...
+	std::cout << "Driver::borrarRegistro" << std::endl;
   assert(false);
 }
 
 aed2::Conj<Columna> Driver::columnasDeTabla(const NombreTabla& tabla) const
 {
+	std::cout << "Driver::columnasDeTabla" << std::endl;
 	Conj<Columna> c = Conj<Columna>();
 	Conj<NombreCampo>::const_Iterador cit = this->base.DameTabla(tabla).campos().CrearIt();
 	while(cit.HaySiguiente()){
@@ -135,41 +138,43 @@ aed2::Conj<Columna> Driver::columnasDeTabla(const NombreTabla& tabla) const
 
 aed2::Conj<NombreCampo> Driver::columnasClaveDeTabla(const NombreTabla& tabla) const
 {
+	std::cout << "Driver::columnasClaveDeTabla" << std::endl;
 	return this->base.DameTabla(tabla).claves();
 }
 
 aed2::Conj<Driver::Registro> Driver::registrosDeTabla(const NombreTabla& tabla) const
 {
-  // TODO ...
+	std::cout << "Driver::registrosDeTabla" << std::endl;
   assert(false);
 }
 
 aed2::Nat Driver::cantidadDeAccesosDeTabla(const NombreTabla& tabla) const
 {
-  // TODO ...
-  assert(false);
+	std::cout << "Driver::cantidadDeAccesosDeTabla" << std::endl;
+	return this->base.DameTabla(tabla).cantidadDeAccesos();
 }
 
 Driver::Dato Driver::minimo(const NombreTabla& tabla, const NombreCampo& columna) const
 {
-  // TODO ...
+	std::cout << "Driver::minimo" << std::endl;
   assert(false);
 }
 
 Driver::Dato Driver::maximo(const NombreTabla& tabla, const NombreCampo& columna) const
 {
-  // TODO ...
+	std::cout << "Driver::maximo" << std::endl;
   assert(false);
 }
 
 aed2::Conj<Driver::Registro> Driver::buscar(const NombreTabla& tabla, const Registro& criterio) const
 {
-  // TODO ...
+	std::cout << "Driver::buscar" << std::endl;
   assert(false);
 }
 
 aed2::Conj<NombreTabla> Driver::tablas() const
 {
+	std::cout << "Driver::tablas()" << std::endl;
   aed2::Conj<NombreTabla> conjunto;
   Conj<NombreTabla>::Iterador it = base.DameTablas();
   while (it.HaySiguiente()) {
@@ -180,7 +185,7 @@ aed2::Conj<NombreTabla> Driver::tablas() const
 
 NombreTabla Driver::tablaMaxima() const
 {
-  // TODO ...
+	std::cout << "Driver::tablaMaxima" << std::endl;
   assert(false);
 }
 
@@ -188,37 +193,37 @@ NombreTabla Driver::tablaMaxima() const
 
 bool Driver::tieneIndiceNat(const NombreTabla& tabla) const
 {
-  // TODO ...
+	std::cout << "Driver::tieneIndiceNat" << std::endl;
   assert(false);
 }
 
 bool Driver::tieneIndiceString(const NombreTabla& tabla) const
 {
-  // TODO ...
+	std::cout << "Driver::tieneIndiceString" << std::endl;
   assert(false);
 }
 
 NombreCampo Driver::campoIndiceNat(const NombreTabla& tabla) const
 {
-  // TODO ...
+	std::cout << "Driver::campoIndiceNat" << std::endl;
   assert(false);
 }
 
 NombreCampo Driver::campoIndiceString(const NombreTabla& tabla) const
 {
-  // TODO ...
+	std::cout << "Driver::campoIndiceString" << std::endl;
   assert(false);
 }
 
 void Driver::crearIndiceNat(const NombreTabla& tabla, const NombreCampo& campo)
 {
-  // TODO ...
+	std::cout << "Driver::crearIndiceNat" << std::endl;
   assert(false);
 }
 
 void Driver::crearIndiceString(const NombreTabla& tabla, const NombreCampo& campo)
 {
-  // TODO ...
+	std::cout << "Driver::crearIndiceString" << std::endl;
   assert(false);
 }
 
@@ -226,30 +231,30 @@ void Driver::crearIndiceString(const NombreTabla& tabla, const NombreCampo& camp
 
 bool Driver::hayJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
 {
-  // TODO ...
+	std::cout << "Driver::hayJoin" << std::endl;
   assert(false);
 }
 
 NombreCampo Driver::campoJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
 {
-  // TODO ...
+	std::cout << "Driver::campoJoin" << std::endl;
  assert(false);
 }
 
 void Driver::generarVistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2, const NombreCampo& campo)
 {
-  // TODO ...
+	std::cout << "Driver::generarVistaJoin" << std::endl;
   assert(false);
 }
 
 void Driver::borrarVistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2)
 {
-  // TODO ...
+	std::cout << "Driver::borrarVistaJoin" << std::endl;
   assert(false);
 }
 
 aed2::Conj<Driver::Registro> Driver::vistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2)/* const*/
 {
-  // TODO ...
+	std::cout << "Driver::vistaJoin" << std::endl;
   assert(false);
 }

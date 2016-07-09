@@ -42,7 +42,7 @@ void Base::AgregarTabla(const Tabla& t)
 
 	InfoTabla it = InfoTabla(t);
 	this->Tablas.Definir(t.nombre(), it);
-  std::cout << "AGREGAR3" << std::endl;
+  std::cout << "Tabla Agregada" << std::endl;
 };
 
 void Base::InsertarEntrada(const Registro& r, const NombreTabla& t)
