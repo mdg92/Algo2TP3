@@ -1,6 +1,6 @@
 #include "Tabla.h"
 
-using namespace std;
+//using namespace std;
 using namespace aed2;
 
 /*
@@ -405,6 +405,10 @@ const Conj<NombreCampo> Tabla::campos()const{
 
 NombreTabla Tabla::nombre()const{
 	return this->Nombre_;
+};
+
+const Conj<NombreCampo> Tabla::claves()const{
+	return this->Claves_;
 };
 
 Nat Tabla::cantidadDeAccesos() const{

@@ -249,7 +249,7 @@ class Driver
      * funciones auxiliares que les hagan falta.                            *
      ************************************************************************/
 
-    Base base = Base();
+    Base base;
 
 }; // class Driver
 

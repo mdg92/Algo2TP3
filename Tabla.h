@@ -20,7 +20,7 @@ class Tabla
 	
 		NombreTabla nombre() const;
 
-    const Conj<NombreCampo> claves() const; // FALTA HACER
+    const Conj<NombreCampo> claves() const;
 
     const Conj<NombreCampo> indices() const;
 

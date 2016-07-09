@@ -18,10 +18,10 @@ class DiccLex
   	~DiccLex();
   	//DiccLex(const DiccLex<S>&);
   	void Definir(String, S);
-  	bool Definido(String);
+  //	bool Definido(String);
   	bool Definido(String) const;
   	void Borrar(String);
-  	S& Significado(String);
+  	//S& Significado(String);
   	S& Significado(String) const;
   	Conj<String> DiccClaves();
   	 Conj<String> DiccClaves() const;
@@ -72,7 +72,8 @@ DiccLex<S>::~DiccLex(){
 
 
 template<typename S>
-void DiccLex<S>::Definir(String s, S d){
+void DiccLex<S>::Definir(const String s,S d){
+
 	Nodo** aux=&this->_raiz;
 	int i = 0;
 	int sl = s.length();
@@ -101,9 +102,10 @@ void DiccLex<S>::Definir(String s, S d){
 	if((*aux)->esSig!=true) (*aux)->claveEnConj=(this->_claves).AgregarRapido(s);
 	(*aux)->esSig=true;
 	(*aux)->dato=&d;
+
 };
 
-
+/*
 template<typename S>
 bool DiccLex<S>::Definido(String s){
 	Nodo* aux=this->_raiz;
@@ -116,7 +118,7 @@ bool DiccLex<S>::Definido(String s){
 	} 
 	if(aux!=NULL) res=aux->esSig;
 	return res;
-};
+};*/
 template<typename S>
 bool DiccLex<S>::Definido(String s) const{
 	Nodo* aux=this->_raiz;
@@ -163,7 +165,7 @@ void DiccLex<S>::Borrar(String s){
 	}
 };
 
-
+/*
 template<typename S>
 S& DiccLex<S>::Significado(String s){
 	Nodo* aux=this->_raiz;
@@ -175,7 +177,7 @@ S& DiccLex<S>::Significado(String s){
 	}
 	return *(aux->dato);
 
-};
+};*/
 template<typename S>
 S& DiccLex<S>::Significado(String s) const{
 	Nodo* aux=this->_raiz;

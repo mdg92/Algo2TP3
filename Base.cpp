@@ -35,10 +35,12 @@ NombreCampo Base::CampoJoin(const NombreTabla t1, const NombreTabla t2) const
 
 void Base::AgregarTabla(const Tabla& t)
 {
-	  std::cout << "AGREGAR1" << std::endl;
+	if(this->TabMaxima.NomTabla=="")
+	{
+		this->TabMaxima.NomTabla=t.nombre();
+	}
 
 	InfoTabla it = InfoTabla(t);
-  std::cout << "agregar2" << std::endl;
 	this->Tablas.Definir(t.nombre(), it);
   std::cout << "AGREGAR3" << std::endl;
 };

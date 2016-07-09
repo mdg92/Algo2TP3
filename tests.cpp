@@ -118,19 +118,25 @@ void insertar_una_tabla_vacia()
 
   CREAR_TABLA_PERSONAS( bd );
 
+
   {
     aed2::Conj<aed2::NombreTabla> nombres_tablas;
     nombres_tablas.Agregar(NOMBRE_TABLA_PERSONAS);
+
 
     // TODO el ASSERT_EQ deberia usar el ==
     assert(bd.tablas() == nombres_tablas);
   }
 
+
   // TODO el ASSERT_EQ deberia usar el ==
   assert( bd.columnasDeTabla(NOMBRE_TABLA_PERSONAS) == columnas_personas );
 
+
   // TODO el ASSERT_EQ deberia usar el ==
   assert( bd.columnasClaveDeTabla(NOMBRE_TABLA_PERSONAS) ==  columnas_clave_personas );
+
+
 }
 
 void insertar_registros_en_una_tabla()
