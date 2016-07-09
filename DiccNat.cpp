@@ -1,58 +1,7 @@
-#ifndef DICCNAT_H_
-#define	DICCNAT_H_
+#include "DiccNat.h"
 
-#include <iostream>
-#include "Tipos.h"
-#include "aed2/Lista.h"
-
-namespace aed2 {
-
-template<typename S>
-class DiccNat
-{
-  public:
-
-
-	DiccNat();
-	~DiccNat();
-	//DiccNat(const DiccNat& otro);
-	//DiccNat& operator=(const DiccNat& otro);
-    void Definir(const Nat& clave, const S& significado);
-    //void DefinirRapido(const Nat& clave, const S& significado);
-    bool Definido(const Nat& clave) const;
-   // S& Significado(const Nat& clave);
-    S& Significado(const Nat&) const;
-    void Borrar(const Nat& clave);
-    Lista<Nat>& DiccClaves();
-    Nat Maximo();
-    Nat Minimo();
-    std::ostream& mostrarDicc(std::ostream&) const;
-
-
-  private:
-
-    struct Nodo
-      {
-
-        Nat clave;
-        S significado;
-        Nodo* izquierda;
-        Nodo* derecha;
-        Lista<Nat>::Iterador puntero;
-        Nodo(const Nat& c,const S& s,const Lista<Nat>::Iterador p) :
-        	clave(c), significado(s), izquierda(NULL), derecha(NULL), puntero(p) {};
-        void BorrarNodo();
-
-     };
-
-
-
-    Nodo* primero;
-    Lista<Nat> claves;
-
-
-};
-
+using namespace std;
+using namespace aed2;
 
 template<typename S>
 std::ostream& operator << (std::ostream &os, const DiccNat<S>& d)
@@ -426,5 +375,3 @@ std::ostream& DiccNat<S>::mostrarDicc(std::ostream& d) const
 
 		return d;
 };
-};
-#endif // DICCNAT_H_

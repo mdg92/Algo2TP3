@@ -4,10 +4,11 @@
 #include "Tipos.h"
 #include "aed2/Conj.h"
 #include "aed2/TiposBasicos.h"
+#include "Base.h"
 
 namespace aed2
 {
-
+    
 class Driver
 {
   public:
@@ -247,6 +248,8 @@ class Driver
      * con el cuál interactuar. Además, pueden declarar todas las           *
      * funciones auxiliares que les hagan falta.                            *
      ************************************************************************/
+
+    Base base = Base();
 
 }; // class Driver
 

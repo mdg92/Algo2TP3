@@ -14,10 +14,10 @@ Dato::Dato(const Dato& a){
 };
 
 
-Dato::Dato(const String& y):tipo_(false),valorString_(y)
+Dato::Dato(const String y):tipo_(false),valorString_(y)
 {};
 
-Dato::Dato(const Nat& x):tipo_(true), valorNat_(x)
+Dato::Dato(const Nat x):tipo_(true), valorNat_(x)
 {};
 
 Dato::~Dato(){};
@@ -27,15 +27,15 @@ const Tipo Dato::tipo()const{
 };
 
 
-const Nat& Dato::valorNat()const{
+Nat Dato::valorNat()const{
 	return this->valorNat_;
 };
 
-const String& Dato::valorString()const{
+String Dato::valorString()const{
 	return this->valorString_;
 };
 
-const bool Dato::mismoTipo(const Dato& b)const{
+bool Dato::mismoTipo(const Dato& b)const{
 	if(this->tipo()==b.tipo()){
 		if(this->tipo()){
 			return (this->valorNat()==b.valorNat());
@@ -47,16 +47,16 @@ const bool Dato::mismoTipo(const Dato& b)const{
 	}
 };
 
-const bool Dato::EsString()const{
+bool Dato::EsString()const{
 	return (this->tipo()==false);
 };
 
 
-const bool Dato::EsNat()const{
+bool Dato::EsNat()const{
 	return (this->tipo()==true);
 };
 
-const bool Dato::operator<=(const Dato& b)const{
+bool Dato::operator<=(const Dato& b)const{
 	assert(this->tipo_==b.tipo_);
 	if(this->tipo_){
 		return this->valorNat_ <=b.valorNat_;
@@ -91,7 +91,7 @@ const bool Dato::operator<=(const Dato& b)const{
 //	return mayor;
 //};
 
-const bool Dato::operator ==(const Dato& b)const{
+bool Dato::operator ==(const Dato& b)const{
 	if(this->mismoTipo(b)){
 		if(this->tipo()){
 			return this->valorNat()==b.valorNat();
