@@ -18,13 +18,23 @@ Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, con
 
 Tabla::Tabla(const NombreTabla& nombre, const Conj<NombreCampo>& claves, const Conj<Columna>& columnas){
 	Nombre_=nombre;
+	Registros_ = Conj<Registro>();
 	Conj<Columna>::const_Iterador it=columnas.CrearIt();
 	while(it.HaySiguiente()){
-		Campos_.Definir(it.Siguiente().nombre,it.Siguiente().tipo);
+		Tipo t = it.Siguiente().tipo==NAT;
+		Campos_.Definir(it.Siguiente().nombre, t);
 		it.Avanzar();
 	};
 	Claves_=claves;
+
+	IndiceS = IndiceString();
+	IndiceDS = DiccLex<Tabla::CjDeIteradores>();
+	IndiceN = IndiceNat();
+	IndiceDN = DiccNat<Tabla::CjDeIteradores>();
+
 	CampoR=claves.CrearIt().Siguiente();
+	ConsultaN = DiccNat<Acceso>();
+	ConsultaS = DiccLex<Acceso>();
 	cantAccesos=0;
 }
 

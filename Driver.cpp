@@ -83,7 +83,7 @@ void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& co
  Tabla tabla = Tabla(nombre, claves, columnas);
  std::cout << "1" << std::endl;
   base.AgregarTabla(tabla);
-  std::cout << "2a" << std::endl;
+  std::cout << "2" << std::endl;
 
 }
 
@@ -144,7 +144,22 @@ aed2::Conj<NombreCampo> Driver::columnasClaveDeTabla(const NombreTabla& tabla) c
 
 aed2::Conj<Driver::Registro> Driver::registrosDeTabla(const NombreTabla& tabla) const
 {
-	std::cout << "Driver::registrosDeTabla" << std::endl;
+	/*std::cout << "Driver::registrosDeTabla" << std::endl;
+	Conj<Registro> c = this->base.Tablas.Significado(tabla).TActual.registros();
+
+	aed2::Registro r;
+
+	while (it.HaySiguiente())
+	{
+	  Dato dato = it.SiguienteSignificado();
+	  if (dato.esNat()) {
+		aed2::Dato d(dato.dameNat());
+		r.Definir(it.SiguienteClave(), d);
+	  } else {
+		aed2::Dato d(dato.dameString());
+		r.Definir(it.SiguienteClave(), d);
+	  }
+	}*/
   assert(false);
 }
 

@@ -73,7 +73,7 @@ DiccLex<S>::~DiccLex(){
 
 template<typename S>
 void DiccLex<S>::Definir(const String s,S d){
-	std::cout << "Definir 1" << std::endl;
+
 	Nodo** aux=&this->_raiz;
 	int i = 0;
 	int sl = s.length();
@@ -102,7 +102,7 @@ void DiccLex<S>::Definir(const String s,S d){
 	if((*aux)->esSig!=true) (*aux)->claveEnConj=(this->_claves).AgregarRapido(s);
 	(*aux)->esSig=true;
 	(*aux)->dato=&d;
-	std::cout << "Definir 2" << std::endl;
+	std::cout << s << " Definido" << std::endl;
 
 };
 

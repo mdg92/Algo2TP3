@@ -98,6 +98,7 @@ class Tabla
 	DiccNat<Acceso> ConsultaN; //Nat
 	DiccLex<Acceso> ConsultaS;//String
 	int cantAccesos;
+
 }; // class Tabla
 
 };
