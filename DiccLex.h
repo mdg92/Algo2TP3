@@ -184,7 +184,7 @@ S& DiccLex<S>::Significado(String s) const{
 	Nodo* aux=this->_raiz;
 	int i =0;
 	int sl = s.length();
-	while (i<sl){
+	while (i<=sl){
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
 	}
