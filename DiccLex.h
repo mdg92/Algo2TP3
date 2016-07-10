@@ -17,7 +17,7 @@ class DiccLex
   	DiccLex();
   	~DiccLex();
   	//DiccLex(const DiccLex<S>&);
-  	void Definir(String, S);
+  	void Definir(String, const S&);
   //	bool Definido(String);
   	bool Definido(String) const;
   	void Borrar(String);
@@ -71,7 +71,7 @@ DiccLex<S>::~DiccLex(){
 
 
 template<typename S>
-void DiccLex<S>::Definir(const String s,S d){
+void DiccLex<S>::Definir(const String s, const S& d){
 
 	Nodo** aux=&this->_raiz;
 	int i = 0;
@@ -100,7 +100,7 @@ void DiccLex<S>::Definir(const String s,S d){
 	}
 	if((*aux)->esSig!=true) (*aux)->claveEnConj=(this->_claves).AgregarRapido(s);
 	(*aux)->esSig=true;
-	(*aux)->dato=&d;
+	(*aux)->dato= new S(d);
 	std::cout << s << " Definido" << std::endl;
 
 };
@@ -182,7 +182,7 @@ S& DiccLex<S>::Significado(String s) const{
 	Nodo* aux=this->_raiz;
 	int i =0;
 	int sl = s.length();
-	while (i<=sl){
+	while (i<sl){
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
 	}
