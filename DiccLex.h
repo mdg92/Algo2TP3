@@ -32,7 +32,6 @@ class DiccLex
 
 /*
   	class Iterador{
-
   	}
 */
   private:
@@ -177,7 +176,6 @@ S& DiccLex<S>::Significado(String s){
 		i++;
 	}
 	return *(aux->dato);
-
 };*/
 template<typename S>
 S& DiccLex<S>::Significado(String s) const{

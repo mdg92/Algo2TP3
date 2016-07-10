@@ -6,13 +6,21 @@ using namespace aed2;
 
 Tabla::Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo>& claves, const Registro& columnas){
 	Nombre_=nombre;
-	Conj<NombreCampo>::Iterador it=columnas.Campos().CrearIt();
+	Conj<NombreCampo> conj = columnas.Campos();
+	Conj<NombreCampo>::Iterador it=conj.CrearIt();
+
+	std::cout << conj << std::endl;
+
 	while(it.HaySiguiente()){
+		std::cout << it.Siguiente() << std::endl;
 		std::cout << "while de tabla" << std::endl;
-//		Campos_.Definir(it.Siguiente(),columnas.Significado(it.Siguiente()).tipo());
+		std::cout << "Aca esta el problema Tabla.cpp linea 18" << std::endl;
+		std::cout << columnas.Significado(it.Siguiente()).tipo() << std::endl;
 		Campos_.Definir(it.Siguiente(),columnas.Significado(it.Siguiente()).tipo());
+
 		it.Avanzar();
 	};
+
 	std::cout << "Salimos del while de tabla" << std::endl;
 	Claves_=claves;
 	std::cout << "declamora claves" << std::endl;
@@ -63,7 +71,6 @@ Tabla::Tabla(const Tabla& t){
 	this->IndiceS.Max=maxSS;
 	Dato minSS(t.IndiceS.Min);
 	this->IndiceS.Min=minSS;
-
 	Conj<NombreCampo >::const_Iterador itclaves = t.Claves_.CrearIt();
 	while(itclaves.HaySiguiente()){
 		this->Claves_.Agregar(itclaves.Siguiente());

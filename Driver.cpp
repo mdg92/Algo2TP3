@@ -106,11 +106,11 @@ void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& co
 		std::cout << "Avanzamos" << std::endl;
 		itcol.Avanzar();
 	}
-	assert(reg.Significado("DNI")==d2);
-	std::cout << "Salimos del while y Comparamos" << std::endl;
-//	aed2::Tabla tabla(nombre, claves, reg);
+	//assert(reg.Significado("nombre").EsString());
+	std::cout <<reg.Campos() << "Salimos del while y Comparamos" << std::endl;
+	aed2::Tabla tabla(nombre, claves, reg);
 //	std::cout << "aa" << std::endl;
-//	base.AgregarTabla(tabla);
+	base.AgregarTabla(tabla);
 //	std::cout << "aa" << std::endl;
 
 }
