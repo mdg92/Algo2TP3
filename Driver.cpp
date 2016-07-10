@@ -77,13 +77,41 @@ Driver::~Driver()
 
 // Tablas
 
+//void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& columnas, const aed2::Conj<NombreCampo>& claves)
+//{
+//	std::cout << "Driver::crearTabla" << std::endl;
+// Tabla tabla = Tabla(nombre, claves, columnas);
+// std::cout << "1" << std::endl;
+//  base.AgregarTabla(tabla);
+//  std::cout << "2" << std::endl;
+//
+//}
+
 void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& columnas, const aed2::Conj<NombreCampo>& claves)
 {
 	std::cout << "Driver::crearTabla" << std::endl;
- Tabla tabla = Tabla(nombre, claves, columnas);
- std::cout << "1" << std::endl;
-  base.AgregarTabla(tabla);
-  std::cout << "2" << std::endl;
+	//creamos con columnas un Registro
+	Conj<Columna>::const_Iterador itcol=columnas.CrearIt();
+	aed2::Registro reg;
+	std::cout << "Entramos" << std::endl;
+	aed2::Dato d1(1);
+	aed2::Dato d2("a");
+
+	while(itcol.HaySiguiente()){
+		if(itcol.Siguiente().tipo==0){
+			reg.Definir(itcol.Siguiente().nombre,d1);
+		}else{
+			reg.Definir(itcol.Siguiente().nombre,d2);
+		}
+		std::cout << "Avanzamos" << std::endl;
+		itcol.Avanzar();
+	}
+	assert(reg.Significado("DNI")==d2);
+	std::cout << "Salimos del while y Comparamos" << std::endl;
+//	aed2::Tabla tabla(nombre, claves, reg);
+//	std::cout << "aa" << std::endl;
+//	base.AgregarTabla(tabla);
+//	std::cout << "aa" << std::endl;
 
 }
 

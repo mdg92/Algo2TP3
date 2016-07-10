@@ -32,8 +32,8 @@ class Tabla
 
     Nat cantidadDeAccesos() const;
 
-    //Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo > claves, const Registro columnas);
-    Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Conj<Columna>& columnas);
+    Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Registro& columnas);
+    //Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Conj<Columna>& columnas);
 
 
     //Tabla(const Tabla& t);

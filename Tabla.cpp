@@ -3,40 +3,46 @@
 //using namespace std;
 using namespace aed2;
 
-/*
-Tabla::Tabla(const NombreTabla nombre, const aed2::Conj<NombreCampo> claves, const Registro columnas){
+
+Tabla::Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo>& claves, const Registro& columnas){
 	Nombre_=nombre;
-	Conj<Campo>::const_Iterador it=columnas.CrearIt();
+	Conj<NombreCampo>::Iterador it=columnas.Campos().CrearIt();
 	while(it.HaySiguiente()){
-		Campos_.Definir(it.SiguienteClave(),it.SiguienteSignificado().tipo());
+		std::cout << "while de tabla" << std::endl;
+//		Campos_.Definir(it.Siguiente(),columnas.Significado(it.Siguiente()).tipo());
+		Campos_.Definir(it.Siguiente(),columnas.Significado(it.Siguiente()).tipo());
 		it.Avanzar();
 	};
+	std::cout << "Salimos del while de tabla" << std::endl;
 	Claves_=claves;
+	std::cout << "declamora claves" << std::endl;
 	CampoR=claves.CrearIt().Siguiente();
+	std::cout << "campo R" << std::endl;
 	cantAccesos=0;
-}*/
-
-Tabla::Tabla(const NombreTabla& nombre, const Conj<NombreCampo>& claves, const Conj<Columna>& columnas){
-	Nombre_=nombre;
-	Registros_ = Conj<Registro>();
-	Conj<Columna>::const_Iterador it=columnas.CrearIt();
-	while(it.HaySiguiente()){
-		Tipo t = it.Siguiente().tipo==NAT;
-		Campos_.Definir(it.Siguiente().nombre, t);
-		it.Avanzar();
-	};
-	Claves_=claves;
-
-	IndiceS = IndiceString();
-	IndiceDS = DiccLex<Tabla::CjDeIteradores>();
-	IndiceN = IndiceNat();
-	IndiceDN = DiccNat<Tabla::CjDeIteradores>();
-
-	CampoR=claves.CrearIt().Siguiente();
-	ConsultaN = DiccNat<Acceso>();
-	ConsultaS = DiccLex<Acceso>();
-	cantAccesos=0;
+	std::cout << "accesos cero" << std::endl;
 }
+//
+//Tabla::Tabla(const NombreTabla& nombre, const Conj<NombreCampo>& claves, const Conj<Columna>& columnas){
+//	Nombre_=nombre;
+//	Registros_ = Conj<Registro>();
+//	Conj<Columna>::const_Iterador it=columnas.CrearIt();
+//	while(it.HaySiguiente()){
+//		Tipo t = it.Siguiente().tipo==NAT;
+//		Campos_.Definir(it.Siguiente().nombre, t);
+//		it.Avanzar();
+//	};
+//	Claves_=claves;
+//
+//	IndiceS = IndiceString();
+//	IndiceDS = DiccLex<Tabla::CjDeIteradores>();
+//	IndiceN = IndiceNat();
+//	IndiceDN = DiccNat<Tabla::CjDeIteradores>();
+//
+//	CampoR=claves.CrearIt().Siguiente();
+//	ConsultaN = DiccNat<Acceso>();
+//	ConsultaS = DiccLex<Acceso>();
+//	cantAccesos=0;
+//}
 
 
 /*
@@ -277,14 +283,14 @@ void Tabla::borrarRegistro(const Registro valor){
 
 			ConsultaS.Borrar(guia.Significado(CampoR).valorString());
 		}
-//		if(IndiceN.EnUso){
-//			IndiceN.Max=IndiceN.DiccClaves.min();
-//			IndiceN.Min=IndiceN.DiccClaves.min();
-//		}
-//		if(IndiceS.EnUso){
-//			IndiceS.Max=IndiceS.DiccClaves.min();
-//			IndiceS.Min=IndiceS.DiccClaves.min();
-//		}
+		if(IndiceN.EnUso){
+			IndiceN.Max=IndiceDN.Maximo();
+			IndiceN.Min=IndiceDN.Minimo();
+		}
+		if(IndiceS.EnUso){
+			IndiceS.Max=IndiceDS.Maximo();
+			IndiceS.Min=IndiceDS.Minimo();
+		}
 		itguia.EliminarSiguiente();
 
 	}else{
