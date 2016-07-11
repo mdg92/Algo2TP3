@@ -128,10 +128,12 @@ void Driver::insertarRegistro(const NombreTabla& tabla, const Registro& registro
         aed2::Dato d(dato.dameString());
         r.Definir(it.SiguienteClave(), d);
       }
+      it.Avanzar();
     }
 
-  std::cout << "registro creado" << std::endl;
+  std::cout << "Registro creado. " << std::endl;
   base.InsertarEntrada(r, tabla);
+  std::cout << "Insertado en la tabla." << std::endl;
 }
 
 void Driver::borrarRegistro(const NombreTabla& tabla, const NombreCampo& columna, const Dato& valor)
@@ -142,10 +144,11 @@ void Driver::borrarRegistro(const NombreTabla& tabla, const NombreCampo& columna
 
 aed2::Conj<Columna> Driver::columnasDeTabla(const NombreTabla& tabla) const
 {
-	std::cout << "Driver::columnasDeTabla" << std::endl;
+	std::cout << "Driver::columnasDeTabla " << std::endl;
 	Conj<Columna> c = Conj<Columna>();
 	//Creo las columnas a partir de campos() y tipoCampo().
-	Conj<NombreCampo>::const_Iterador cit = this->base.DameTabla(tabla).campos().CrearIt();
+	Conj<NombreCampo> conj =  this->base.DameTabla(tabla).campos();
+	Conj<NombreCampo>::const_Iterador cit = conj.CrearIt();
 	while(cit.HaySiguiente()){
 		Columna col;
 		col.nombre = cit.Siguiente();
@@ -158,6 +161,7 @@ aed2::Conj<Columna> Driver::columnasDeTabla(const NombreTabla& tabla) const
 		col.tipo = tc;
 
 		c.AgregarRapido(col);
+		cit.Avanzar();
 	}
 
 	return c;
@@ -283,7 +287,7 @@ aed2::Conj<Driver::Registro> Driver::buscar(const NombreTabla& tabla, const Regi
 
 aed2::Conj<NombreTabla> Driver::tablas() const
 {
-	std::cout << "Driver::tablas()" << std::endl;
+	std::cout << "Driver::tablas() " << std::endl;
 
 	//Paso los NombreTabla del iterador devuelto por DameTablas a un conjunto.
 
@@ -296,9 +300,7 @@ aed2::Conj<NombreTabla> Driver::tablas() const
 
 	while (it.HaySiguiente()) {
 		conjunto.Agregar(it.Siguiente());
-		////////
-		assert(false);
-		////////
+		it.Avanzar();
   }
   return conjunto;
 };

@@ -24,7 +24,7 @@ class DiccLex
   	//S& Significado(String);
   	S& Significado(String) const;
   	//Conj<String> DiccClaves();
-  	Conj<String> DiccClaves() const;
+  	const Conj<String>& DiccClaves() const;
   	String Maximo();
   	String Maximo()const;
   	String Minimo();
@@ -65,8 +65,8 @@ void DiccLex<S>::borrec (Nodo* n){
 };
 template<typename S>
 DiccLex<S>::~DiccLex(){
-	Nodo* root=this->_raiz;
-	if (root!=NULL) borrec(root);
+	//Nodo* root=this->_raiz;
+	//if (root!=NULL) borrec(root);
 };
 
 
@@ -197,7 +197,7 @@ Conj<String> DiccLex<S>::DiccClaves(){
 };*/
 
 template<typename S>
-Conj<String> DiccLex<S>::DiccClaves() const{
+const Conj<String>& DiccLex<S>::DiccClaves() const{
 	return this->_claves;
 };
 

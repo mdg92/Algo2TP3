@@ -145,7 +145,9 @@ void insertar_registros_en_una_tabla()
 
   CREAR_TABLA_PERSONAS( bd );
   bd.insertarRegistro(NOMBRE_TABLA_PERSONAS, persona_1);
+  std::cout << "Inserto registro 1 " << std::endl;
   bd.insertarRegistro(NOMBRE_TABLA_PERSONAS, persona_2);
+  std::cout << "Inserto registro 2" << std::endl;
 
   {
     aed2::Conj<aed2::Driver::Registro> registros;
@@ -575,6 +577,12 @@ int main(int argc, char **argv)
   //////////////////////////////////////////////////////////////////////////////
 
   RUN_TEST( insertar_una_tabla_vacia );
+  std::cout << "Ahora entra al insertar registro" << std::endl;
+  std::cout << "Ahora entra al insertar registro" << std::endl;
+  std::cout << "Ahora entra al insertar registro" << std::endl;
+  std::cout << "Ahora entra al insertar registro" << std::endl;
+  std::cout << "Ahora entra al insertar registro" << std::endl;
+
   RUN_TEST( insertar_registros_en_una_tabla );
   RUN_TEST( borrar_un_campo_clave_en_una_tabla );
   // RUN_TEST( borrar_un_campo_no_clave_en_una_tabla );

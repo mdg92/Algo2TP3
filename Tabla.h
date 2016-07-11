@@ -40,15 +40,13 @@ class Tabla
 
     ~Tabla();
 
-   void agregarRegistro(const Registro);
+   void agregarRegistro(const Registro&);
 
     void borrarRegistro(const Registro);
 
     void indexar(const NombreCampo);
 
     bool puedoInsertar(const Registro) const;
-
-    bool compatible(const Registro reg)const;
 
     const Dato& minimo(const NombreCampo) const;
 

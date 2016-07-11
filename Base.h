@@ -85,7 +85,7 @@ class Base
 	
 	struct InfoTabla{
 		Tabla TActual;
-		DiccLex<struct InfoJoin> Joins;
+		DiccLex<InfoJoin> Joins;
 		InfoTabla(Tabla t): TActual(t), Joins(DiccLex<InfoJoin>()){};
 	};
 

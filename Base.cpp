@@ -19,7 +19,7 @@ Base::Base()
 const Conj<NombreTabla>::const_Iterador Base::DameTablas() const
 {
 	//return this->Tablas.claves().CrearIt();
-	Conj<NombreCampo> conj = this->Tablas.DiccClaves();
+	const Conj<NombreCampo>& conj = this->Tablas.DiccClaves();
 
 	Conj<NombreCampo>::const_Iterador it = conj.CrearIt();
 
@@ -59,28 +59,29 @@ void Base::AgregarTabla(const Tabla& t)
 
 void Base::InsertarEntrada(const Registro& r, const NombreTabla& t)
 {
-	InfoTabla* InfoT = &(this->Tablas.Significado(t));
-	InfoT->TActual.agregarRegistro(r);
+	InfoTabla& InfoT = this->Tablas.Significado(t);
 
-	if(InfoT->Joins.DiccClaves().EsVacio())
+	InfoT.TActual.agregarRegistro(r);
+
+	if(InfoT.Joins.DiccClaves().EsVacio())
 	{
 
-		Conj<NombreTabla>::Iterador NomTab = InfoT->Joins.DiccClaves().CrearIt();
+		Conj<NombreTabla>::const_Iterador NomTab = InfoT.Joins.DiccClaves().CrearIt();
 
 		while(NomTab.HaySiguiente()){
 
-			InfoJoin* InfoJ = &(InfoT->Joins.Significado(NomTab.Siguiente()));
+			InfoJoin& InfoJ = InfoT.Joins.Significado(NomTab.Siguiente());
 			DatoCambio DatoC = DatoCambio(r, t, true);
-			InfoJ->Rcambios.AgregarAtras(DatoC);
+			InfoJ.Rcambios.AgregarAtras(DatoC);
 			NomTab.Avanzar();
 
 		}
 
 	}
 
-	if(InfoT->TActual.cantidadDeAccesos() > this->TabMaxima.Modif)
+	if(InfoT.TActual.cantidadDeAccesos() > this->TabMaxima.Modif)
 	{
-		this->TabMaxima.Modif = InfoT->TActual.cantidadDeAccesos();
+		this->TabMaxima.Modif = InfoT.TActual.cantidadDeAccesos();
 		this->TabMaxima.NomTabla = t;
 	}
 
@@ -92,7 +93,7 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 
 	if(InfoT.Joins.DiccClaves().EsVacio())
 	{
-		Conj<NombreTabla>::Iterador itNom = InfoT.Joins.DiccClaves().CrearIt();
+		Conj<NombreTabla>::const_Iterador itNom = InfoT.Joins.DiccClaves().CrearIt();
 
 		while(itNom.HaySiguiente()){
 			InfoJoin InfoJ = InfoT.Joins.Significado(itNom.Siguiente());
