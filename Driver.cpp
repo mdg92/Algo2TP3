@@ -111,7 +111,7 @@ void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& co
 	aed2::Tabla tabla(nombre, claves, reg);
 //	std::cout << "aa" << std::endl;
 	base.AgregarTabla(tabla);
-//	std::cout << "aa" << std::endl;
+	std::cout << "FIN" << std::endl;
 
 }
 
@@ -290,12 +290,20 @@ aed2::Conj<NombreTabla> Driver::tablas() const
 
 	//Paso los NombreTabla del iterador devuelto por DameTablas a un conjunto.
 
-  aed2::Conj<NombreTabla> conjunto;
-  Conj<NombreTabla>::Iterador it = base.DameTablas();
-  while (it.HaySiguiente()) {
-    conjunto.Agregar(it.Siguiente());
+	aed2::Conj<NombreTabla>::const_Iterador it = this->base.DameTablas();
+	aed2::Conj<NombreTabla> conjunto;
+
+	if(it.HaySiguiente()){
+	std::cout << it.Siguiente() << std::endl;
+	}
+
+	while (it.HaySiguiente()) {
+		std::cout << "tablas 2" << std::endl;
+		conjunto.Agregar(it.Siguiente());
+		assert(false);
   }
   return conjunto;
+  std::cout << "tablas 3" << std::endl;
 };
 
 NombreTabla Driver::tablaMaxima() const
@@ -375,7 +383,7 @@ void Driver::crearIndiceString(const NombreTabla& tabla, const NombreCampo& camp
 
 bool Driver::hayJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
 {
-	std::cout << "Driver::hayJoin" << std::endl;
+	std::cout << "Driver::hayJoina" << std::endl;
   return this->base.HayJoin(tabla1, tabla2);
 }
 

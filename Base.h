@@ -24,7 +24,7 @@ class Base
 
 	~Base();
 
-	Conj<NombreTabla>::Iterador DameTablas() const;
+	const Conj<NombreTabla>::const_Iterador DameTablas() const;
 
 	Tabla& DameTabla(const NombreTabla) const;
 

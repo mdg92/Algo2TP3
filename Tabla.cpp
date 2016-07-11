@@ -14,7 +14,7 @@ Tabla::Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo>& claves, c
 	while(it.HaySiguiente()){
 		std::cout << it.Siguiente() << std::endl;
 		std::cout << "while de tabla" << std::endl;
-		std::cout << "Aca esta el problema Tabla.cpp linea 18" << std::endl;
+		//std::cout << "Aca esta el problema Tabla.cpp linea 18" << std::endl;
 		std::cout << columnas.Significado(it.Siguiente()).tipo() << std::endl;
 		Campos_.Definir(it.Siguiente(),columnas.Significado(it.Siguiente()).tipo());
 

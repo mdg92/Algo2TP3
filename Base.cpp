@@ -12,10 +12,21 @@ Base::Base()
 	this->Tablas = DiccLex<InfoTabla>();
 };
 
-Conj<NombreTabla>::Iterador Base::DameTablas() const
+
+
+
+
+const Conj<NombreTabla>::const_Iterador Base::DameTablas() const
 {
 	//return this->Tablas.claves().CrearIt();
-	return this->Tablas.DiccClaves().CrearIt();
+	Conj<NombreCampo> conj = this->Tablas.DiccClaves();
+
+	Conj<NombreCampo>::const_Iterador it = conj.CrearIt();
+
+	if(it.HaySiguiente()){
+		std::cout <<" Dame tablas: " <<it.Siguiente() << std::endl;}
+
+	return it;
 };
 
 Tabla& Base::DameTabla(const NombreTabla t) const
@@ -326,3 +337,21 @@ Conj<Conj<Registro>::Iterador> Base::Buscar(const Registro c, const NombreTabla 
 {
 	return this->Tablas.Significado(t).TActual.buscarEnTabla(c);
 };
+
+/*
+int main(){
+	Base b;
+	Conj<NombreCampo> claves;
+	claves.AgregarRapido("Campo1");
+	Registro reg = Registro();
+	Dato d1 = Dato(1);
+	reg.Definir("Campo1", d1);
+	reg.Definir("Campo2", d1);
+	Tabla t = Tabla("Tabla1", claves, reg);
+	b.AgregarTabla(t);
+
+	std::cout << b.DameTablas().Siguiente() << std::endl;
+	assert(false);
+
+}
+*/

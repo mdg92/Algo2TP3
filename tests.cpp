@@ -115,28 +115,29 @@ void bd_vacia()
 void insertar_una_tabla_vacia()
 {
   aed2::Driver bd;
-  std::cout << "a" << std::endl;
+
   CREAR_TABLA_PERSONAS( bd );
 
-  std::cout << "b" << std::endl;
+
   {
     aed2::Conj<aed2::NombreTabla> nombres_tablas;
     nombres_tablas.Agregar(NOMBRE_TABLA_PERSONAS);
 
-    std::cout << "c" << std::endl;
+    std::cout << "easdasda" << std::endl;
+
     // TODO el ASSERT_EQ deberia usar el ==
     assert(bd.tablas() == nombres_tablas);
   }
-  std::cout << "d" << std::endl;
+
 
   // TODO el ASSERT_EQ deberia usar el ==
   assert( bd.columnasDeTabla(NOMBRE_TABLA_PERSONAS) == columnas_personas );
 
-  std::cout << "e" << std::endl;
+
   // TODO el ASSERT_EQ deberia usar el ==
   assert( bd.columnasClaveDeTabla(NOMBRE_TABLA_PERSONAS) ==  columnas_clave_personas );
 
-  std::cout << "f" << std::endl;
+
 }
 
 void insertar_registros_en_una_tabla()
@@ -598,4 +599,5 @@ int main(int argc, char **argv)
   RUN_TEST( joins_no_son_simetricos );
 
   return 0;
+
 }

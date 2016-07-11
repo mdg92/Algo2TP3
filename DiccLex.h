@@ -23,8 +23,8 @@ class DiccLex
   	void Borrar(String);
   	//S& Significado(String);
   	S& Significado(String) const;
-  	Conj<String> DiccClaves();
-  	 Conj<String> DiccClaves() const;
+  	//Conj<String> DiccClaves();
+  	Conj<String> DiccClaves() const;
   	String Maximo();
   	String Maximo()const;
   	String Minimo();
@@ -35,7 +35,7 @@ class DiccLex
   	}
 */
   private:
-  	
+
   	struct Nodo{
   		S* dato;
   		bool esSig;
@@ -81,7 +81,7 @@ void DiccLex<S>::Definir(const String s, const S& d){
 			(*aux)= new Nodo;
 			(*aux)->esSig=false;
 			int j = 0;
-			while(j<256){  
+			while(j<256){
 				((*aux)->continuaciones[j])=NULL;
 				j++;
 			}
@@ -93,7 +93,7 @@ void DiccLex<S>::Definir(const String s, const S& d){
 		(*aux)= new Nodo;
 		(*aux)->esSig=false;
 		int j = 0;
-		while(j<256){  
+		while(j<256){
 			(*aux)->continuaciones[j]=NULL;
 			j++;
 		}
@@ -114,8 +114,8 @@ bool DiccLex<S>::Definido(String s){
 	int sl = s.length();
 	while(i<sl && aux!=NULL){
 		aux=(aux->continuaciones[(unsigned char)(s[i])]);
-		i++;	
-	} 
+		i++;
+	}
 	if(aux!=NULL) res=aux->esSig;
 	return res;
 };*/
@@ -127,8 +127,8 @@ bool DiccLex<S>::Definido(String s) const{
 	int sl = s.length();
 	while(i<sl && aux!=NULL){
 		aux=(aux->continuaciones[(unsigned char)(s[i])]);
-		i++;	
-	} 
+		i++;
+	}
 	if(aux!=NULL) res=aux->esSig;
 	return res;
 };
@@ -191,10 +191,10 @@ S& DiccLex<S>::Significado(String s) const{
 };
 
 
-template<typename S>
+/*template<typename S>
 Conj<String> DiccLex<S>::DiccClaves(){
 	return this->_claves;
-};
+};*/
 
 template<typename S>
 Conj<String> DiccLex<S>::DiccClaves() const{
