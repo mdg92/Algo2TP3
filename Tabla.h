@@ -48,6 +48,8 @@ class Tabla
 
     bool puedoInsertar(const Registro) const;
 
+    bool compatible(const Registro reg)const;
+
     const Dato& minimo(const NombreCampo) const;
 
     const Dato& maximo(const NombreCampo) const;

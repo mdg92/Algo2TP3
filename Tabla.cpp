@@ -439,17 +439,24 @@ Nat Tabla::cantidadDeAccesos() const{
 	return this->cantAccesos;
 };
 
-//const bool Tabla::puedoInsertar(const Registro r)const{
-//
-//};
+bool Tabla::puedoInsertar(const Registro r)const{
+	return (this->compatible(r) and !(this->hayCoincidencia(r, this->claves(),this->registros())));
+};
 
 
-//const bool Tabla::compatible(const Registro reg){
-//	bool valor=true;
-//	if(reg.campos().){
-//
-//	}
-//}
+bool Tabla::compatible(const Registro reg)const{
+	bool valor=true;
+	if(reg.Campos().Cardinal()==Campos_.DiccClaves().Cardinal()){
+		Conj<NombreCampo>::Iterador itcampos=Campos_.DiccClaves().CrearIt();
+		while(valor and itcampos.HaySiguiente()){
+			NombreCampo c=itcampos.Siguiente();
+			valor=reg.Definido(c);
+		}
+	}else{
+		valor=false;
+	}
+	return (valor and this->mismosTipos(reg));
+}
 
 const Dato& Tabla::minimo(const NombreCampo campo)const{
 		if(IndiceN.EnUso and IndiceN.CampoI==campo){
@@ -476,7 +483,13 @@ bool Tabla::puedeIndexar(const NombreCampo c)const{
 }
 
 bool Tabla::hayCoincidencia(const Registro reg, const Conj<NombreCampo > cjcampo, const Conj<Registro > cjreg)const{
-	return true;
+	Conj<Registro >::const_Iterador itcr=cjreg.CrearIt();
+	bool res=false;
+	while(itcr.HaySiguiente()){
+		res=itcr.Siguiente().CoincideAlguno(cjcampo,reg);
+		itcr.Avanzar();
+	}
+	return res;
 };
 
 Conj<Conj<Registro >::Iterador > Tabla::coincidencias(const Registro crit, Conj<Registro > cjreg) const{
