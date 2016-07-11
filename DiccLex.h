@@ -101,7 +101,7 @@ void DiccLex<S>::Definir(const String s, const S& d){
 	if((*aux)->esSig!=true) (*aux)->claveEnConj=(this->_claves).AgregarRapido(s);
 	(*aux)->esSig=true;
 	(*aux)->dato= new S(d);
-	std::cout << s << " Definido" << std::endl;
+	//std::cout << s << " Definido" << std::endl;
 
 };
 

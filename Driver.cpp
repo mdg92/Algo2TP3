@@ -93,7 +93,6 @@ void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& co
 	//creamos con columnas un Registro
 	Conj<Columna>::const_Iterador itcol=columnas.CrearIt();
 	aed2::Registro reg;
-	std::cout << "Entramos" << std::endl;
 	aed2::Dato d1(1);
 	aed2::Dato d2("a");
 
@@ -103,15 +102,13 @@ void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& co
 		}else{
 			reg.Definir(itcol.Siguiente().nombre,d2);
 		}
-		std::cout << "Avanzamos" << std::endl;
 		itcol.Avanzar();
 	}
 	//assert(reg.Significado("nombre").EsString());
-	std::cout <<reg.Campos() << "Salimos del while y Comparamos" << std::endl;
 	aed2::Tabla tabla(nombre, claves, reg);
 //	std::cout << "aa" << std::endl;
 	base.AgregarTabla(tabla);
-	std::cout << "FIN" << std::endl;
+
 
 }
 
@@ -294,16 +291,16 @@ aed2::Conj<NombreTabla> Driver::tablas() const
 	aed2::Conj<NombreTabla> conjunto;
 
 	if(it.HaySiguiente()){
-	std::cout << it.Siguiente() << std::endl;
+	std::cout << "it.Siguiente() de DameTablas() en tablas(): " << it.Siguiente() << std::endl;
 	}
 
 	while (it.HaySiguiente()) {
-		std::cout << "tablas 2" << std::endl;
 		conjunto.Agregar(it.Siguiente());
+		////////
 		assert(false);
+		////////
   }
   return conjunto;
-  std::cout << "tablas 3" << std::endl;
 };
 
 NombreTabla Driver::tablaMaxima() const

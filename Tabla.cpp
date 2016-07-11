@@ -9,25 +9,26 @@ Tabla::Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo>& claves, c
 	Conj<NombreCampo> conj = columnas.Campos();
 	Conj<NombreCampo>::Iterador it=conj.CrearIt();
 
-	std::cout << conj << std::endl;
+	//std::cout << conj << std::endl;
 
 	while(it.HaySiguiente()){
-		std::cout << it.Siguiente() << std::endl;
-		std::cout << "while de tabla" << std::endl;
+		std::cout << "Campo: " << it.Siguiente();
+		//std::cout << "while de tabla" << std::endl;
 		//std::cout << "Aca esta el problema Tabla.cpp linea 18" << std::endl;
-		std::cout << columnas.Significado(it.Siguiente()).tipo() << std::endl;
+		std::cout << " Tipo: " <<columnas.Significado(it.Siguiente()).tipo() << std::endl;
 		Campos_.Definir(it.Siguiente(),columnas.Significado(it.Siguiente()).tipo());
 
 		it.Avanzar();
 	};
 
-	std::cout << "Salimos del while de tabla" << std::endl;
+	//std::cout << "Salimos del while de tabla" << std::endl;
 	Claves_=claves;
-	std::cout << "declamora claves" << std::endl;
+	//std::cout << "declamora claves" << std::endl;
 	CampoR=claves.CrearIt().Siguiente();
-	std::cout << "campo R" << std::endl;
+	//std::cout << "campo R" << std::endl;
 	cantAccesos=0;
-	std::cout << "accesos cero" << std::endl;
+	//std::cout << "accesos cero" << std::endl;
+	std::cout << "Tabla " << nombre << " creada."<< std::endl;
 }
 //
 //Tabla::Tabla(const NombreTabla& nombre, const Conj<NombreCampo>& claves, const Conj<Columna>& columnas){

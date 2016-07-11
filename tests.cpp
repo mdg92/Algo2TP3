@@ -123,7 +123,6 @@ void insertar_una_tabla_vacia()
     aed2::Conj<aed2::NombreTabla> nombres_tablas;
     nombres_tablas.Agregar(NOMBRE_TABLA_PERSONAS);
 
-    std::cout << "easdasda" << std::endl;
 
     // TODO el ASSERT_EQ deberia usar el ==
     assert(bd.tablas() == nombres_tablas);

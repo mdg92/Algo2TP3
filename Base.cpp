@@ -24,7 +24,8 @@ const Conj<NombreTabla>::const_Iterador Base::DameTablas() const
 	Conj<NombreCampo>::const_Iterador it = conj.CrearIt();
 
 	if(it.HaySiguiente()){
-		std::cout <<" Dame tablas: " <<it.Siguiente() << std::endl;}
+		std::cout <<"Dame tablas: " << conj << std::endl;
+		std::cout <<"it.Siguiente() de DameTablas() en DameTablas(): " << it.Siguiente() << std::endl;}
 
 	return it;
 };
@@ -53,7 +54,7 @@ void Base::AgregarTabla(const Tabla& t)
 
 	InfoTabla it = InfoTabla(t);
 	this->Tablas.Definir(t.nombre(), it);
-  std::cout << "Tabla Agregada" << std::endl;
+  std::cout << "Tabla "<< t.nombre() <<" Agregada" << std::endl;
 };
 
 void Base::InsertarEntrada(const Registro& r, const NombreTabla& t)
