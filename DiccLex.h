@@ -140,7 +140,7 @@ void DiccLex<S>::Borrar(String s){
 	int i =0;
 	Lista<Nodo*> l;
 	int sl = s.length();
-	while(i<=sl){
+	while(i<sl){
 		l.AgregarAdelante(aux);
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
