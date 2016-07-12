@@ -23,7 +23,7 @@ class Registro
   	bool Definido(NombreCampo);
   	bool Definido(NombreCampo) const;
   	void Borrar(NombreCampo);
-  	Conj<NombreCampo> Campos() const;
+  	const Conj<NombreCampo>& Campos() const;
   	NombreCampo Maximo();
   	NombreCampo Minimo();
   	Dato& Significado(NombreCampo) const;

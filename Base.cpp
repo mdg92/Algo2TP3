@@ -89,7 +89,7 @@ void Base::InsertarEntrada(const Registro& r, const NombreTabla& t)
 
 void Base::Borrar(const Registro cr, const NombreTabla t)
 {
-	InfoTabla InfoT = this->Tablas.Significado(t);
+	InfoTabla& InfoT = this->Tablas.Significado(t);
 
 	if(InfoT.Joins.DiccClaves().EsVacio())
 	{

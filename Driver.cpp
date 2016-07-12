@@ -139,7 +139,21 @@ void Driver::insertarRegistro(const NombreTabla& tabla, const Registro& registro
 void Driver::borrarRegistro(const NombreTabla& tabla, const NombreCampo& columna, const Dato& valor)
 {
 	std::cout << "Driver::borrarRegistro" << std::endl;
-  assert(false);
+
+	// Creo un registro con los datos columna y valor.
+	aed2::Registro r = aed2::Registro();
+
+
+	if(valor.esNat()){
+		aed2::Dato d(valor.dameNat());
+		r.Definir(columna, d);
+		this->base.Borrar(r, tabla);
+	}else{
+		aed2::Dato d(valor.dameString());
+		r.Definir(columna, d);
+		this->base.Borrar(r, tabla);
+	}
+
 }
 
 aed2::Conj<Columna> Driver::columnasDeTabla(const NombreTabla& tabla) const
@@ -184,19 +198,27 @@ aed2::Conj<Driver::Registro> Driver::registrosDeTabla(const NombreTabla& tabla) 
 	while (c.HaySiguiente())
 	{
 		aed2::Registro reg = c.Siguiente();
-		Conj<NombreCampo>::Iterador cr = reg.Campos().CrearIt();
+		Conj<NombreCampo>::const_Iterador cr = reg.Campos().CrearIt();
+
+		std::cout << "Busco en: " <<c.Siguiente().Campos() << "Este campo: " <<cr.Siguiente() << "Devuelve: " <<reg.Significado(cr.Siguiente()).EsNat() << std::endl;
+
 		Driver::Registro r;
 
 		while(cr.HaySiguiente()){
 
 			if(reg.Significado(cr.Siguiente()).EsNat()){
+
 				r.Definir(cr.Siguiente(), Driver::Dato(reg.Significado(cr.Siguiente()).valorNat()));
 			}else if(reg.Significado(cr.Siguiente()).EsString()){
+
 				r.Definir(cr.Siguiente(), Driver::Dato(reg.Significado(cr.Siguiente()).valorString()));
 			}
+
+			cr.Avanzar();
 		}
 
 		res.AgregarRapido(r);
+		c.Avanzar();
 
 	}
 
@@ -265,7 +287,7 @@ aed2::Conj<Driver::Registro> Driver::buscar(const NombreTabla& tabla, const Regi
 	while (c.HaySiguiente())
 	{
 		aed2::Registro reg = c.Siguiente().Siguiente();
-		Conj<NombreCampo>::Iterador cr = reg.Campos().CrearIt();
+		Conj<NombreCampo>::const_Iterador cr = reg.Campos().CrearIt();
 		Driver::Registro r;
 
 		while(cr.HaySiguiente()){
@@ -416,7 +438,7 @@ aed2::Conj<Driver::Registro> Driver::vistaJoin(const NombreTabla& tabla1, const 
 	while (c.HaySiguiente())
 	{
 		aed2::Registro reg = c.Siguiente();
-		Conj<NombreCampo>::Iterador cr = reg.Campos().CrearIt();
+		Conj<NombreCampo>::const_Iterador cr = reg.Campos().CrearIt();
 		Driver::Registro r;
 
 		while(cr.HaySiguiente()){

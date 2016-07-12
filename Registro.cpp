@@ -6,7 +6,7 @@ using namespace aed2;
 bool Registro::operator==(const Registro otro)const{
 	bool respuesta=this->Campos()==otro.Campos();
 	if(respuesta){
-		Conj<NombreCampo>::Iterador it=this->Campos().CrearIt();
+		Conj<NombreCampo>::const_Iterador it=this->Campos().CrearIt();
 		while(respuesta and it.HaySiguiente()){
 			respuesta=this->Significado(it.Siguiente())==otro.Significado(it.Siguiente());
 			it.Avanzar();
@@ -44,7 +44,7 @@ Dato& Registro::Significado(NombreCampo s) const{
 
 };
 
-Conj<NombreCampo> Registro::Campos() const{
+const Conj<NombreCampo>& Registro::Campos() const{
 	return this->base.DiccClaves();
 };
 
@@ -59,7 +59,7 @@ NombreCampo Registro::Minimo(){
 };
 
 bool Registro::BorrarPreg( Registro r2){
-	Conj<NombreCampo>::Iterador it =(this->Campos()).CrearIt();
+	Conj<NombreCampo>::const_Iterador it =(this->Campos()).CrearIt();
 	bool res=true;
 	while(res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
 	return res;
@@ -92,10 +92,10 @@ bool Registro::EnTodos(NombreCampo c, Conj<Registro> cr){
 
 
 Registro Registro::UnirRegistros(NombreCampo c, Registro r2){
-	Conj<NombreCampo>::Iterador itAux =r2.Campos().CrearIt();
+	Conj<NombreCampo>::const_Iterador itAux =r2.Campos().CrearIt();
 	Registro res;
 	while(itAux.HaySiguiente()) res.Definir(itAux.Siguiente(), r2.Significado(itAux.Siguiente())), itAux.Avanzar();
-	Conj<NombreCampo>::Iterador it =this->Campos().CrearIt();
+	Conj<NombreCampo>::const_Iterador it =this->Campos().CrearIt();
 	while(it.HaySiguiente()) res.Definir(it.Siguiente(), this->Significado(it.Siguiente())), it.Avanzar();
 	return res;
 };

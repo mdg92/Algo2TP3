@@ -508,7 +508,7 @@ Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > 
 			while(itcr2.HaySiguiente()){
 				if(d.Definido(itcr2.Siguiente().Significado(campo).valorNat())){
 					Registro regaux;
-					Conj<NombreCampo>::Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
+					Conj<NombreCampo>::const_Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
 
 					while(icnj.HaySiguiente()){
 						regaux.Definir(icnj.Siguiente(),itcr2.Siguiente().Significado(icnj.Siguiente()));
@@ -528,7 +528,7 @@ Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > 
 			while(itcr2.HaySiguiente()){
 				if(d.Definido(itcr2.Siguiente().Significado(campo).valorString())){
 					Registro regaux;
-					Conj<NombreCampo>::Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
+					Conj<NombreCampo>::const_Iterador icnj= itcr2.Siguiente().Campos().CrearIt();
 					while(icnj.HaySiguiente()){
 						regaux.Definir(icnj.Siguiente(),itcr2.Siguiente().Significado(icnj.Siguiente()));
 						icnj.Avanzar();
@@ -544,7 +544,7 @@ Conj<Registro> combinarRegistros(const NombreCampo campo, const Conj<Registro > 
 
 bool Tabla::mismosTipos(const Registro reg)const{
 	bool valor=true;
-	Conj<NombreCampo>::Iterador itClaves=reg.Campos().CrearIt();
+	Conj<NombreCampo>::const_Iterador itClaves=reg.Campos().CrearIt();
 	Conj<NombreCampo>::const_Iterador itCampos=this->Campos_.DiccClaves().CrearIt();
 	while(valor && itClaves.HaySiguiente()){
 		bool val1=reg.Significado(itClaves.Siguiente()).EsNat();
