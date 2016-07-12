@@ -131,7 +131,7 @@ void Driver::insertarRegistro(const NombreTabla& tabla, const Registro& registro
       it.Avanzar();
     }
 
-  std::cout << "Registro creado. " << std::endl;
+  std::cout << "Registro creado." << std::endl;
   base.InsertarEntrada(r, tabla);
   std::cout << "Insertado en la tabla." << std::endl;
 }

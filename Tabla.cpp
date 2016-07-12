@@ -106,7 +106,7 @@ void Tabla::agregarRegistro(const Registro& registro){
 	this->cantAccesos++;
 	//Registro reg = Registro(registro_);
 	std::cout << "Registro agregado en tabla: "<< registro.Campos() << std::endl;
-	Conj<Registro>::Iterador nuevo = this->Registros_.Agregar(registro);
+	Conj<Registro>::Iterador nuevo = this->Registros_.AgregarRapido(registro);
 	std::cout << "Valores de nuevo en tabla  "<< nuevo.Siguiente().Campos() << std::endl;
 	bool TipoRelacion=Campos_.Significado(CampoR);
 	Acceso a;
