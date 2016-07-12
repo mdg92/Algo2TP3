@@ -65,8 +65,8 @@ bool Registro::BorrarPreg( Registro r2){
 	return res;
 };
 
-bool Registro::CoincideAlguno(Conj<NombreCampo> cc,  Registro r2){
-	Conj<NombreCampo>::Iterador it =cc.CrearIt();
+bool Registro::CoincideAlguno(const Conj<NombreCampo> cc,  Registro r2) const{
+	Conj<NombreCampo>::const_Iterador it =cc.CrearIt();
 	bool res=false;
 	while(!res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
 	return res;

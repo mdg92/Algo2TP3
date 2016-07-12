@@ -32,6 +32,8 @@ class Tabla
 
     Nat cantidadDeAccesos() const;
 
+    bool compatible(const Registro reg)const;
+
     Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Registro& columnas);
     //Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Conj<Columna>& columnas);
 
@@ -76,14 +78,14 @@ class Tabla
 		   bool EnUso;
 		   Dato Min;
 		   Dato Max;
-		   IndiceNat(NombreCampo nom="a"):CampoI(nom), EnUso(false), Min(1),Max(1){};
+		   IndiceNat():CampoI(""), EnUso(false), Min(0),Max(0){};
 	};
 	struct IndiceString{
 		   NombreCampo CampoI;
 		   bool EnUso;
 		   Dato Min;
 		   Dato Max;
-		   IndiceString(NombreCampo nom="a"):CampoI(nom), EnUso(false), Min("a"),Max("a"){};
+		   IndiceString():CampoI(""), EnUso(false), Min(""),Max(""){};
 	};
 	IndiceString IndiceS;
 	DiccLex<Tabla::CjDeIteradores > IndiceDS;//DiccString

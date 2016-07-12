@@ -65,7 +65,7 @@ bool Driver::Dato::operator != (const Dato& otro) const
 
 Driver::Driver()
 {
-	std::cout << "Driver::Driver()" << std::endl;
+	std::cout << "Driver::Driver() " << std::endl;
   this->base = Base();
 }
 
@@ -131,9 +131,8 @@ void Driver::insertarRegistro(const NombreTabla& tabla, const Registro& registro
       it.Avanzar();
     }
 
-  std::cout << "Registro creado." << std::endl;
   base.InsertarEntrada(r, tabla);
-  std::cout << "Insertado en la tabla." << std::endl;
+
 }
 
 void Driver::borrarRegistro(const NombreTabla& tabla, const NombreCampo& columna, const Dato& valor)
@@ -200,7 +199,6 @@ aed2::Conj<Driver::Registro> Driver::registrosDeTabla(const NombreTabla& tabla) 
 		aed2::Registro reg = c.Siguiente();
 		Conj<NombreCampo>::const_Iterador cr = reg.Campos().CrearIt();
 
-		std::cout << "Busco en: " <<c.Siguiente().Campos() << "Este campo: " <<cr.Siguiente() << "Devuelve: " <<reg.Significado(cr.Siguiente()).EsNat() << std::endl;
 
 		Driver::Registro r;
 
@@ -233,13 +231,17 @@ aed2::Nat Driver::cantidadDeAccesosDeTabla(const NombreTabla& tabla) const
 
 Driver::Dato Driver::minimo(const NombreTabla& tabla, const NombreCampo& columna) const
 {
-	std::cout << "Driver::minimo" << std::endl;
+	std::cout << "Driver::minimo " << std::endl;
 
 	//Paso el dato de tipo aed2 a tipo Driver
 
+
 	if(this->base.DameTabla(tabla).minimo(columna).EsNat()){
+
 		return Driver::Dato(this->base.DameTabla(tabla).minimo(columna).valorNat());
+
 	}else{
+
 		return Driver::Dato(this->base.DameTabla(tabla).minimo(columna).valorString());
 	}
 
@@ -278,6 +280,7 @@ aed2::Conj<Driver::Registro> Driver::buscar(const NombreTabla& tabla, const Regi
 		aed2::Dato d(dato.dameString());
 		r.Definir(it.SiguienteClave(), d);
 	  }
+	  it.Avanzar();
 	}
 
 
@@ -297,9 +300,11 @@ aed2::Conj<Driver::Registro> Driver::buscar(const NombreTabla& tabla, const Regi
 				r.Definir(cr.Siguiente(),  Driver::Dato(reg.Significado(cr.Siguiente()).valorString()));
 			}
 
+			cr.Avanzar();
 		}
 
 		res.AgregarRapido(r);
+		c.Avanzar();
 
 	}
 
@@ -316,9 +321,6 @@ aed2::Conj<NombreTabla> Driver::tablas() const
 	aed2::Conj<NombreTabla>::const_Iterador it = this->base.DameTablas();
 	aed2::Conj<NombreTabla> conjunto;
 
-	if(it.HaySiguiente()){
-	std::cout << "it.Siguiente() de DameTablas() en tablas(): " << it.Siguiente() << std::endl;
-	}
 
 	while (it.HaySiguiente()) {
 		conjunto.Agregar(it.Siguiente());
@@ -338,11 +340,19 @@ NombreTabla Driver::tablaMaxima() const
 
 bool Driver::tieneIndiceNat(const NombreTabla& tabla) const
 {
-	std::cout << "Driver::tieneIndiceNat" << std::endl;
-	Conj<NombreCampo>::const_Iterador it = this->base.DameTabla(tabla).indices().CrearIt();
-	bool res;
+	std::cout << "Driver::tieneIndiceNat " << std::endl;
+	Conj<NombreCampo> conj = this->base.DameTabla(tabla).indices();
+	Conj<NombreCampo>::const_Iterador it = conj.CrearIt();
+
+	std::cout << "Indices: "<< this->base.DameTabla(tabla).indices() << std::endl;
+
+	bool res = false;
 	while(it.HaySiguiente()){
+
+		std::cout << "Indice Siguiente: " << it.Siguiente() << std::endl;
 		res = this->base.DameTabla(tabla).tipoCampo(it.Siguiente());
+		std::cout << "Tipo Indice Siguiente: " << this->base.DameTabla(tabla).tipoCampo(it.Siguiente()) << std::endl;
+		it.Avanzar();
 	}
 
 	return res;
@@ -351,10 +361,13 @@ bool Driver::tieneIndiceNat(const NombreTabla& tabla) const
 bool Driver::tieneIndiceString(const NombreTabla& tabla) const
 {
 	std::cout << "Driver::tieneIndiceString" << std::endl;
-	Conj<NombreCampo>::const_Iterador it = this->base.DameTabla(tabla).indices().CrearIt();
-	bool res;
+	Conj<NombreCampo> conj = this->base.DameTabla(tabla).indices();
+	Conj<NombreCampo>::const_Iterador it = conj.CrearIt();
+
+	bool res = false;
 	while(it.HaySiguiente()){
 		res = !this->base.DameTabla(tabla).tipoCampo(it.Siguiente());
+		it.Avanzar();
 	}
 
 	return res;
@@ -363,12 +376,15 @@ bool Driver::tieneIndiceString(const NombreTabla& tabla) const
 NombreCampo Driver::campoIndiceNat(const NombreTabla& tabla) const
 {
 	std::cout << "Driver::campoIndiceNat" << std::endl;
-	Conj<NombreCampo>::const_Iterador it = this->base.DameTabla(tabla).indices().CrearIt();
+	Conj<NombreCampo> conj = this->base.DameTabla(tabla).indices();
+	Conj<NombreCampo>::const_Iterador it = conj.CrearIt();
 	NombreCampo res;
 	while(it.HaySiguiente()){
 		if(this->base.DameTabla(tabla).tipoCampo(it.Siguiente())){
 			res = it.Siguiente();
 		}
+
+		it.Avanzar();
 	}
 
 	return res;
@@ -377,12 +393,14 @@ NombreCampo Driver::campoIndiceNat(const NombreTabla& tabla) const
 NombreCampo Driver::campoIndiceString(const NombreTabla& tabla) const
 {
 	std::cout << "Driver::campoIndiceString" << std::endl;
-	Conj<NombreCampo>::const_Iterador it = this->base.DameTabla(tabla).indices().CrearIt();
+	Conj<NombreCampo> conj = this->base.DameTabla(tabla).indices();
+	Conj<NombreCampo>::const_Iterador it = conj.CrearIt();
 	NombreCampo res;
 	while(it.HaySiguiente()){
 		if(!this->base.DameTabla(tabla).tipoCampo(it.Siguiente())){
 			res = it.Siguiente();
 		}
+		it.Avanzar();
 	}
 
 	return res;
@@ -448,10 +466,11 @@ aed2::Conj<Driver::Registro> Driver::vistaJoin(const NombreTabla& tabla1, const 
 				r.Definir(cr.Siguiente(),  Driver::Dato(reg.Significado(cr.Siguiente()).valorString()));
 			}
 
+			cr.Avanzar();
 		}
 
 		res.AgregarRapido(r);
-
+		c.Avanzar();
 	}
 
   return res;
