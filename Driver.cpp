@@ -142,15 +142,19 @@ void Driver::borrarRegistro(const NombreTabla& tabla, const NombreCampo& columna
 	// Creo un registro con los datos columna y valor.
 	aed2::Registro r = aed2::Registro();
 
-
 	if(valor.esNat()){
+		std::cout << "1" << std::endl;
 		aed2::Dato d(valor.dameNat());
 		r.Definir(columna, d);
+		std::cout << "2" << std::endl;
 		this->base.Borrar(r, tabla);
+		std::cout << "3" << std::endl;
 	}else{
+
 		aed2::Dato d(valor.dameString());
 		r.Definir(columna, d);
 		this->base.Borrar(r, tabla);
+
 	}
 
 }
@@ -283,13 +287,15 @@ aed2::Conj<Driver::Registro> Driver::buscar(const NombreTabla& tabla, const Regi
 	  it.Avanzar();
 	}
 
-
-	Conj<Conj<aed2::Registro>::Iterador>::Iterador c = this->base.Buscar(r, tabla).CrearIt();
+	Conj<Conj<aed2::Registro>::const_Iterador> conj = this->base.Buscar(r, tabla);
+	Conj<Conj<aed2::Registro>::const_Iterador>::Iterador c = conj.CrearIt();
 	Conj<Driver::Registro> res;
+
 
 	while (c.HaySiguiente())
 	{
-		aed2::Registro reg = c.Siguiente().Siguiente();
+		aed2::Registro reg =  c.Siguiente().Siguiente();
+
 		Conj<NombreCampo>::const_Iterador cr = reg.Campos().CrearIt();
 		Driver::Registro r;
 
@@ -422,7 +428,7 @@ void Driver::crearIndiceString(const NombreTabla& tabla, const NombreCampo& camp
 
 bool Driver::hayJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
 {
-	std::cout << "Driver::hayJoina" << std::endl;
+	std::cout << "Driver::hayJoin" << std::endl;
   return this->base.HayJoin(tabla1, tabla2);
 }
 

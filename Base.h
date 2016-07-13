@@ -50,7 +50,7 @@ class Base
 
 	const NombreTabla TablaMaxima() const;
 
-	Conj<Conj<Registro>::Iterador> Buscar(const Registro, const NombreTabla) const;
+	Conj<Conj<Registro>::const_Iterador> Buscar(const Registro, const NombreTabla) const;
 
 
 

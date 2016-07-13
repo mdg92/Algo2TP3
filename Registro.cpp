@@ -58,6 +58,15 @@ NombreCampo Registro::Minimo(){
 	return this->base.Minimo();
 };
 
+NombreCampo Registro::Maximo() const{
+	return this->base.Maximo();
+};
+
+
+NombreCampo Registro::Minimo() const{
+	return this->base.Minimo();
+};
+
 bool Registro::BorrarPreg( Registro r2){
 	Conj<NombreCampo>::const_Iterador it =(this->Campos()).CrearIt();
 	bool res=true;
@@ -75,7 +84,10 @@ bool Registro::CoincideAlguno(const Conj<NombreCampo> cc,  Registro r2) const{
 bool Registro::CoincidenTodos(Conj<NombreCampo> cc,  Registro r2) const{
 	Conj<NombreCampo>::Iterador it =cc.CrearIt();
 	bool res=true;
-	while(res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
+	while(res && it.HaySiguiente()){
+		res=this->Significado(it.Siguiente())==r2.Significado(it.Siguiente());
+		it.Avanzar();
+	}
 	return res;
 };
 

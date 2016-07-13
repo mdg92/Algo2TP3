@@ -97,14 +97,14 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 
 			if(cr.Definido(InfoJ.CampoJ))
 			{
-				Conj<Conj<Registro>::Iterador> c = InfoT.TActual.buscarEnTabla(cr);
+				Conj<Conj<Registro>::const_Iterador> c = InfoT.TActual.buscarEnTabla(cr);
 				Registro reg = c.CrearIt().Siguiente().Siguiente();
 				DatoCambio DatoC = DatoCambio(reg, itNom.Siguiente(), false);
 				InfoJ.Rcambios.Lista<DatoCambio>::AgregarAtras(DatoC);
 			}else{
 
-				Conj<Conj<Registro>::Iterador> eje = InfoT.TActual.buscarEnTabla(cr);
-				Conj<Conj<Registro>::Iterador>::Iterador itReg = eje.CrearIt();
+				Conj<Conj<Registro>::const_Iterador> eje = InfoT.TActual.buscarEnTabla(cr);
+				Conj<Conj<Registro>::const_Iterador>::Iterador itReg = eje.CrearIt();
 
 				while(itReg.HaySiguiente())
 				{
@@ -207,8 +207,8 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 			regModelo.Definir(c, its.Siguiente());
 
-			Conj<Conj<Registro>::Iterador> cjr1 = Ta1.buscarEnTabla(regModelo);
-			Conj<Conj<Registro>::Iterador> cjr2 = Ta2.buscarEnTabla(regModelo);
+			Conj<Conj<Registro>::const_Iterador> cjr1 = Ta1.buscarEnTabla(regModelo);
+			Conj<Conj<Registro>::const_Iterador> cjr2 = Ta2.buscarEnTabla(regModelo);
 
 			Registro r1 = cjr1.CrearIt().Siguiente().Siguiente();
 			Registro r2 = cjr2.CrearIt().Siguiente().Siguiente();
@@ -332,8 +332,9 @@ const NombreTabla Base::TablaMaxima() const
 };
 
 
-Conj<Conj<Registro>::Iterador> Base::Buscar(const Registro c, const NombreTabla t) const
+Conj<Conj<Registro>::const_Iterador> Base::Buscar(const Registro c, const NombreTabla t) const
 {
+
 	return this->Tablas.Significado(t).TActual.buscarEnTabla(c);
 };
 

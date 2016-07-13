@@ -16,7 +16,7 @@ class Tabla
 {
   public:
 
-    typedef aed2::Conj<aed2::Conj<Registro >::Iterador > CjDeIteradores;
+    typedef Conj<Conj<Registro >::Iterador> CjDeIteradores;
 	
 		NombreTabla nombre() const;
 
@@ -58,7 +58,7 @@ class Tabla
 
     bool hayCoincidencia(const Registro, const Conj<NombreCampo>, const Conj<Registro > )const;
 
-    Conj<Conj<Registro >::Iterador > coincidencias(const Registro, const Conj<Registro >) const;
+    Conj<Conj<Registro >::const_Iterador > coincidencias(const Registro, const Conj<Registro>&) const;
 
     Conj<Registro> combinarRegistros(const NombreCampo, const Conj<Registro>, const Conj<Registro>);
 
@@ -66,7 +66,7 @@ class Tabla
 
     bool mismosTipos(const Registro) const;
 
-    Conj<Conj<Registro>::Iterador> buscarEnTabla(const Registro)const;
+    Conj<Conj<Registro>::const_Iterador> buscarEnTabla(const Registro)const;
 
   private:
 	NombreTabla Nombre_;
@@ -88,12 +88,12 @@ class Tabla
 		   IndiceString():CampoI(""), EnUso(false), Min(""),Max(""){};
 	};
 	IndiceString IndiceS;
-	DiccLex<Tabla::CjDeIteradores > IndiceDS;//DiccString
+	DiccLex<CjDeIteradores> IndiceDS;//DiccString
 	IndiceNat IndiceN;
-	DiccNat<Tabla::CjDeIteradores > IndiceDN; //DiccNat
+	DiccNat<CjDeIteradores> IndiceDN; //DiccNat
 	struct Acceso{
-		   aed2::Conj<aed2::Conj<Registro >::Iterador >::Iterador S;
-		   aed2::Conj<aed2::Conj<Registro >::Iterador >::Iterador N;
+		   Conj<Conj<Registro >::Iterador >::Iterador S;
+		   Conj<Conj<Registro >::Iterador >::Iterador N;
 		   //<>
 	};
 	NombreCampo CampoR;

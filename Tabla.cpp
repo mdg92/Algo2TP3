@@ -41,9 +41,9 @@ Tabla::Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo>& claves, c
 //	Claves_=claves;
 //
 //	IndiceS = IndiceString();
-//	IndiceDS = DiccLex<Tabla::CjDeIteradores>();
+//	IndiceDS = DiccLex<Tabla::Conj<Conj<Registro>::Iterador>>();
 //	IndiceN = IndiceNat();
-//	IndiceDN = DiccNat<Tabla::CjDeIteradores>();
+//	IndiceDN = DiccNat<Tabla::Conj<Conj<Registro>::Iterador>>();
 //
 //	CampoR=claves.CrearIt().Siguiente();
 //	ConsultaN = DiccNat<Acceso>();
@@ -111,26 +111,26 @@ void Tabla::agregarRegistro(const Registro& registro){
 	if(this->indices().Cardinal()>0){
 		//Sabemos que hay algun indice
 		if(IndiceS.EnUso and IndiceN.EnUso){
-			Tabla::CjDeIteradores::Iterador itcjs;
+			Conj<Conj<Registro>::Iterador>::Iterador itcjs;
 			aed2::String valorS= registro.Significado(IndiceS.CampoI).valorString();
 			if(!IndiceDS.Definido(valorS)){
-				Tabla::CjDeIteradores cjs=IndiceDS.Significado(valorS);
+				Conj<Conj<Registro>::Iterador>& cjs=IndiceDS.Significado(valorS);
 				itcjs=cjs.Agregar(nuevo);
 			}else{
 				// no esta definido
-				Tabla::CjDeIteradores cjs;
+				Conj<Conj<Registro>::Iterador> cjs;
 				itcjs=cjs.Agregar(nuevo);
 				IndiceDS.Definir(valorS, cjs);
 			}
 			a.S=itcjs;
-			Tabla::CjDeIteradores::Iterador itcjn;
+			Conj<Conj<Registro>::Iterador>::Iterador itcjn;
 			aed2::Nat valorN=registro.Significado(IndiceN.CampoI).valorNat();
 			if(IndiceDN.Definido(valorN)){
-				Tabla::CjDeIteradores cjn=IndiceDN.Significado(valorN);
+				Conj<Conj<Registro>::Iterador>& cjn=IndiceDN.Significado(valorN);
 				itcjn=cjn.Agregar(nuevo);
 			}else{
 				// no esta definido
-				Tabla::CjDeIteradores cjn;
+				Conj<Conj<Registro>::Iterador> cjn;
 				itcjn=cjn.Agregar(nuevo);
 				IndiceDN.Definir(valorN, cjn);
 			}
@@ -156,14 +156,14 @@ void Tabla::agregarRegistro(const Registro& registro){
 			}
 		}else{
 			if(IndiceS.EnUso){
-				Tabla::CjDeIteradores::Iterador itcjs;
+				Conj<Conj<Registro>::Iterador>::Iterador itcjs;
 				aed2::String valorS= registro.Significado(IndiceS.CampoI).valorString();
 				if(!IndiceDS.Definido(valorS)){
-					Tabla::CjDeIteradores cjs=IndiceDS.Significado(valorS);
+					Conj<Conj<Registro>::Iterador>& cjs=IndiceDS.Significado(valorS);
 					itcjs=cjs.Agregar(nuevo);
 				}else{
 					// no esta definido
-					Tabla::CjDeIteradores cjs;
+					Conj<Conj<Registro>::Iterador> cjs;
 					itcjs=cjs.Agregar(nuevo);
 					IndiceDS.Definir(valorS, cjs);
 				}
@@ -182,15 +182,15 @@ void Tabla::agregarRegistro(const Registro& registro){
 				}
 			}else{
 				if(IndiceN.EnUso){
-					Tabla::CjDeIteradores::Iterador itcjn;
+					Conj<Conj<Registro>::Iterador>::Iterador itcjn;
 					Dato valorNN=registro.Significado(IndiceN.CampoI);
 					aed2::Nat valorN=registro.Significado(IndiceN.CampoI).valorNat();
 					if(IndiceDN.Definido(valorN)){
-						Tabla::CjDeIteradores cjn=IndiceDN.Significado(valorN);
+						Conj<Conj<Registro>::Iterador>& cjn=IndiceDN.Significado(valorN);
 						itcjn=cjn.Agregar(nuevo);
 					}else{
 						// no esta definido
-						Tabla::CjDeIteradores cjn;
+						Conj<Conj<Registro>::Iterador> cjn;
 						itcjn=cjn.Agregar(nuevo);
 						IndiceDN.Definir(valorN, cjn);
 					}
@@ -230,58 +230,97 @@ const Conj<Registro>& Tabla::registros() const{
 }
 
 void Tabla::borrarRegistro(const Registro valor){
-	cantAccesos++;
+
 	// registro_ tiene un solo campo que es clave.
-	Conj<Registro >::Iterador itguia;
+	Conj<Registro>::Iterador itguia;
 	Registro guia;
 	NombreCampo campovalor=valor.Campos().CrearIt().Siguiente();
 	Dato datovalor=valor.Significado(campovalor);
 	bool tipocampovalor = Campos_.Significado(campovalor);
+
 	if((IndiceN.EnUso and IndiceN.CampoI==campovalor) or (IndiceS.EnUso and IndiceS.CampoI==campovalor)){
-		Acceso acceso_;
+
 		if(tipocampovalor){
 			//El campo del registro valor es Nat
-				CjDeIteradores cjItn = IndiceDN.Significado(datovalor.valorNat());
+				Conj<Conj<Registro>::Iterador>& cjItn = IndiceDN.Significado(datovalor.valorNat());
 				itguia=cjItn.CrearIt().Siguiente();
-				guia=cjItn.CrearIt().Siguiente().Siguiente();
-				itguia.EliminarSiguiente();
-				if(!itguia.HaySiguiente()){// si para el conj no hay mas elementos lo elimino del indice.
-					IndiceDN.Borrar(datovalor.valorNat());
+				//guia=cjItn.CrearIt().Siguiente().Siguiente();
+				while(itguia.HaySiguiente()){
+
+					if(Campos_.Significado(CampoR)){
+						ConsultaN.Borrar(itguia.Siguiente().Significado(CampoR).valorNat());
+					}else{
+						ConsultaS.Borrar(itguia.Siguiente().Significado(CampoR).valorString());
+					}
+
+					itguia.EliminarSiguiente();
+
+					if(itguia.HaySiguiente()){
+						itguia.Avanzar();
+					}
 				}
+				//if(!itguia.HaySiguiente() && !itguia.HayAnterior()){// si para el conj no hay mas elementos lo elimino del indice.
+					IndiceDN.Borrar(datovalor.valorNat());
+				//}
 		}else{
 			//El campo del registro valor es String
-				CjDeIteradores cjIts = IndiceDS.Significado(datovalor.valorString());
+				Conj<Conj<Registro>::Iterador>& cjIts = IndiceDS.Significado(datovalor.valorString());
 				itguia=cjIts.CrearIt().Siguiente();
-				guia=cjIts.CrearIt().Siguiente().Siguiente();
-				itguia.EliminarSiguiente();
-				if(!itguia.HaySiguiente()){
-					IndiceDS.Borrar(datovalor.valorString());
+
+				while(itguia.HaySiguiente()){
+
+
+					if(Campos_.Significado(CampoR)){
+						ConsultaN.Borrar(itguia.Siguiente().Significado(CampoR).valorNat());
+					}else{
+						ConsultaS.Borrar(itguia.Siguiente().Significado(CampoR).valorString());
+					}
+
+					itguia.EliminarSiguiente();
+					if(itguia.HaySiguiente()){
+						itguia.Avanzar();
+					}
 				}
+				itguia.EliminarSiguiente();
+				//if(!itguia.HaySiguiente() && !itguia.HayAnterior()){
+					IndiceDS.Borrar(datovalor.valorString());
+				//}
+
 		}
+
 		// eliminar el it al reg en el otro indice
-		if(Campos_.Significado(CampoR)){
-			acceso_=ConsultaN.Significado(guia.Significado(CampoR).valorNat());
+		/*if(Campos_.Significado(CampoR)){
+
+			Acceso& acceso_= this->ConsultaN.Significado(guia.Significado(CampoR).valorNat());
+
 			if(IndiceS.EnUso){
 				acceso_.S.EliminarSiguiente();
 				if(!acceso_.S.HaySiguiente()){
 					IndiceDS.Borrar(datovalor.valorString());
 				}
 			}
+
 			if(IndiceN.EnUso){
-				acceso_.N.EliminarSiguiente();
+				std::cout << "acceso_.N.HaySiguiente(): "<< acceso_.N.HaySiguiente() << std::endl;
+				//acceso_.N.EliminarSiguiente();
 				if(!acceso_.N.HaySiguiente()){
 					IndiceDN.Borrar(datovalor.valorNat());
 				}
 			}
+
 			ConsultaN.Borrar(guia.Significado(CampoR).valorNat());
+
+
 		}else{
-			acceso_=ConsultaS.Significado(guia.Significado(CampoR).valorString());
+
+			Acceso& acceso_= this->ConsultaS.Significado(guia.Significado(CampoR).valorString());
 			if(IndiceN.EnUso){
 				acceso_.N.EliminarSiguiente();
 				if(!acceso_.N.HaySiguiente()){
 					IndiceDN.Borrar(datovalor.valorNat());
 				}
 			}
+
 			if(IndiceS.EnUso){
 				acceso_.S.EliminarSiguiente();
 				if(!acceso_.S.HaySiguiente()){
@@ -290,7 +329,9 @@ void Tabla::borrarRegistro(const Registro valor){
 			}
 
 			ConsultaS.Borrar(guia.Significado(CampoR).valorString());
-		}
+		}*/
+
+
 		if(IndiceN.EnUso){
 			IndiceN.Max=IndiceDN.Maximo();
 			IndiceN.Min=IndiceDN.Minimo();
@@ -299,15 +340,17 @@ void Tabla::borrarRegistro(const Registro valor){
 			IndiceS.Max=IndiceDS.Maximo();
 			IndiceS.Min=IndiceDS.Minimo();
 		}
-		itguia.EliminarSiguiente();
+//		itguia.EliminarSiguiente();
 
 	}else{
 		//no hay indice
-		Conj<Registro >::Iterador itreg=Registros_.CrearIt();
+		Conj<Registro>::Iterador itreg=Registros_.CrearIt();
 		while(itreg.HaySiguiente()){
 			if(itreg.Siguiente().Significado(campovalor)==datovalor){
 
-				if(IndiceS.EnUso or IndiceN.EnUso){
+				cantAccesos++;
+
+				/*if(IndiceS.EnUso or IndiceN.EnUso){
 					Dato datoR=itreg.Siguiente().Significado(CampoR);
 					Acceso acceso_;
 					if(Campos_.Significado(CampoR)){
@@ -317,7 +360,8 @@ void Tabla::borrarRegistro(const Registro valor){
 					}
 					if(IndiceS.EnUso){
 						acceso_.S.EliminarSiguiente();
-						if(!acceso_.S.HaySiguiente()){							IndiceDS.Borrar(datovalor.valorString());
+						if(!acceso_.S.HaySiguiente()){
+							IndiceDS.Borrar(datovalor.valorString());
 						}
 					}
 					if(IndiceN.EnUso){
@@ -331,12 +375,15 @@ void Tabla::borrarRegistro(const Registro valor){
 					}else{
 						ConsultaS.Borrar(guia.Significado(CampoR).valorString());
 					}
-				}
+				}*/
+
 				itreg.EliminarSiguiente();
 			}
+
 			if(itreg.HaySiguiente()){
 				itreg.Avanzar();
 			}
+
 		}
 	}
 };
@@ -354,14 +401,14 @@ void Tabla::indexar(const NombreCampo campo)
 		if(this->tipoCampo(campo)){
 			Nat valor=R.Significado(campo).valorNat();
 			if(!IndiceDN.Definido(valor)){
-				CjDeIteradores cjIt;
+				Conj<Conj<Registro>::Iterador> cjIt;
 				IndiceDN.Definir(valor, cjIt);
 			}
 			NN=IndiceDN.Significado(valor).Agregar(itreg);
 		}else{
 			String valor=R.Significado(campo).valorString();
 			if(!IndiceDS.Definido(valor)){
-				CjDeIteradores cjIt;
+				Conj<Conj<Registro>::Iterador> cjIt;
 				IndiceDS.Definir(valor, cjIt);
 			}
 			SS=IndiceDS.Significado(valor).Agregar(itreg);
@@ -491,15 +538,18 @@ bool Tabla::hayCoincidencia(const Registro reg, const Conj<NombreCampo > cjcampo
 	 return res;
 };
 
-Conj<Conj<Registro >::Iterador > Tabla::coincidencias(const Registro crit, Conj<Registro > cjreg) const{
-	Conj<Conj<Registro >::Iterador > salida;
-	Conj<Registro >::Iterador itcr=cjreg.CrearIt();
+Conj<Conj<Registro>::const_Iterador> Tabla::coincidencias(const Registro crit, const Conj<Registro>& cjreg) const{
+	Conj<Conj<Registro>::const_Iterador > salida;
+	Conj<Registro>::const_Iterador itcr=cjreg.CrearIt();
+
 	while(itcr.HaySiguiente()){
+
 		if(crit.CoincidenTodos(crit.Campos(), itcr.Siguiente())){
 			salida.AgregarRapido(itcr);
 		}
 		itcr.Avanzar();
 	}
+
 	return salida;
 };
 
@@ -565,40 +615,47 @@ bool Tabla::mismosTipos(const Registro reg)const{
 	return valor;
 };
 
-Conj<Conj<Registro>::Iterador> Tabla::buscarEnTabla(const Registro criterio) const{
-	Conj<NombreCampo>::const_Iterador itcampos=this->Campos_.DiccClaves().CrearIt();
-	bool Encontrado=false;
-	NombreCampo EncontradoCampoInd;
-	Conj<NombreCampo > cj;
-	Conj<Conj<Registro>::Iterador> res;
-	while(itcampos.HaySiguiente()){
-		NombreCampo c=itcampos.Siguiente();
-		bool Def=criterio.Definido(c);
-		if(Def){
-			bool valorD=(criterio.Significado(c)==Campos_.Significado(c));
-			if(valorD){
-				cj.AgregarRapido(c);
-				bool EncS=(IndiceS.EnUso and IndiceS.CampoI==c);
-				bool EncN=(IndiceN.EnUso and IndiceN.CampoI==c);
-				bool Encontrado=(EncS or EncN);
-				if(Encontrado){
-					EncontradoCampoInd=c;
+Conj<Conj<Registro>::const_Iterador> Tabla::buscarEnTabla(const Registro criterio) const{
+	Conj<NombreCampo> campos=this->Campos_.DiccClaves();
+
+	Conj<Conj<Registro>::const_Iterador> res;
+
+	if(this->IndiceN.EnUso or this->IndiceS.EnUso){
+
+		if(this->IndiceN.EnUso && campos.Pertenece(this->IndiceN.CampoI)){
+
+			Conj<Conj<Registro>::Iterador> conj = this->IndiceDN.Significado(criterio.Significado(this->IndiceN.CampoI).valorNat());
+			Conj<Conj<Registro>::Iterador>::Iterador itconj = conj.CrearIt();
+
+			while(itconj.HaySiguiente()){
+
+				if(criterio.CoincidenTodos(campos, itconj.Siguiente().Siguiente())){
+					res.AgregarRapido(itconj.Siguiente());
 				}
+
+				itconj.Avanzar();
 			}
 		}
-		itcampos.Avanzar();
-	}
-	if(Encontrado){
-		if(IndiceN.EnUso and IndiceN.CampoI==EncontradoCampoInd){
-			Nat valor=criterio.Significado(EncontradoCampoInd).valorNat();
-			res = this->IndiceDN.Significado(valor);
+
+		if(this->IndiceN.EnUso && campos.Pertenece(this->IndiceN.CampoI)){
+
+			Conj<Conj<Registro>::Iterador> conj = this->IndiceDS.Significado(criterio.Significado(this->IndiceS.CampoI).valorString());
+			Conj<Conj<Registro>::Iterador>::Iterador itconj = conj.CrearIt();
+
+			while(itconj.HaySiguiente()){
+
+				if(criterio.CoincidenTodos(campos, itconj.Siguiente().Siguiente())){
+					res.AgregarRapido(itconj.Siguiente());
+				}
+
+				itconj.Avanzar();
+			}
 		}
-		if(IndiceS.EnUso and IndiceS.CampoI==EncontradoCampoInd){
-			String valor=criterio.Significado(EncontradoCampoInd).valorString();
-			res = this->IndiceDS.Significado(valor);
-		}
+
 	}else{
+
 		res = this->coincidencias(criterio, this->Registros_);
+
 	}
 
 	return res;
