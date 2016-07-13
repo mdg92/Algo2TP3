@@ -390,6 +390,7 @@ void actualizar_join_despues_de_insertar()
 
   bd.generarVistaJoin(NOMBRE_TABLA_PERSONAS, NOMBRE_TABLA_TRABAJOS, "DNI");
 
+
   bd.insertarRegistro(NOMBRE_TABLA_PERSONAS, persona_1);
   bd.insertarRegistro(NOMBRE_TABLA_PERSONAS, persona_2);
   bd.insertarRegistro(NOMBRE_TABLA_PERSONAS, persona_3);

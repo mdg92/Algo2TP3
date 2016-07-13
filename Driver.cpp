@@ -428,7 +428,7 @@ void Driver::crearIndiceString(const NombreTabla& tabla, const NombreCampo& camp
 
 bool Driver::hayJoin(const NombreTabla& tabla1, const NombreTabla& tabla2) const
 {
-	std::cout << "Driver::hayJoin" << std::endl;
+	std::cout << "Driver::hayJoin " << std::endl;
   return this->base.HayJoin(tabla1, tabla2);
 }
 
@@ -440,8 +440,9 @@ NombreCampo Driver::campoJoin(const NombreTabla& tabla1, const NombreTabla& tabl
 
 void Driver::generarVistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2, const NombreCampo& campo)
 {
-	std::cout << "Driver::generarVistaJoin" << std::endl;
+	std::cout << "Driver::generarVistaJoin " << std::endl;
 	this->base.GenerarVistaJoin(tabla1, tabla2, campo);
+
 }
 
 void Driver::borrarVistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2)
@@ -452,13 +453,13 @@ void Driver::borrarVistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla
 
 aed2::Conj<Driver::Registro> Driver::vistaJoin(const NombreTabla& tabla1, const NombreTabla& tabla2)/* const*/
 {
-	std::cout << "Driver::vistaJoin" << std::endl;
+	std::cout << "Driver::vistaJoin " << std::endl;
 
 	//Paso los registros de aed2 a Driver para poder devolverlos.
 
   	Conj<aed2::Registro>::Iterador c = this->base.VistaJoin(tabla1, tabla2).CrearIt();
 	Conj<Driver::Registro> res;
-
+	std::cout << "Driver::VistaJoin: " << this->base.VistaJoin(tabla1, tabla2).CrearIt().Siguiente().Campos() << std::endl;
 	while (c.HaySiguiente())
 	{
 		aed2::Registro reg = c.Siguiente();

@@ -663,32 +663,37 @@ Conj<Conj<Registro>::const_Iterador> Tabla::buscarEnTabla(const Registro criteri
 
 
 const Conj<Dato> Tabla::dameColumna(const NombreCampo campo, const Conj<Registro> cr) const{
-	assert(!cr.EsVacio());
+	//assert(!cr.EsVacio());
 	Conj<Dato> res = Conj<Dato>();
-	Conj<Registro >::const_Iterador it=cr.CrearIt();
-	Tipo Tvalor=it.Siguiente().Significado(campo).tipo();
-	if(Tvalor){
-		DiccNat< Dato > bolsaN;
-		while(it.HaySiguiente()){
-			bolsaN.Definir(it.Siguiente().Significado(campo).valorNat(),it.Siguiente().Significado(campo));
-			it.Avanzar();
+	if(!cr.EsVacio()){
+
+		Conj<Dato> res = Conj<Dato>();
+		Conj<Registro >::const_Iterador it=cr.CrearIt();
+		Tipo Tvalor=it.Siguiente().Significado(campo).tipo();
+		if(Tvalor){
+			DiccNat< Dato > bolsaN;
+			while(it.HaySiguiente()){
+				bolsaN.Definir(it.Siguiente().Significado(campo).valorNat(),it.Siguiente().Significado(campo));
+				it.Avanzar();
+			}
+			Lista<Nat>::Iterador itN=bolsaN.DiccClaves().CrearIt();
+			while(itN.HaySiguiente()){
+				res.AgregarRapido(bolsaN.Significado(itN.Siguiente()));
+				itN.Avanzar();
+			}
+		}else{
+			DiccLex<Dato > bolsaS;
+			while(it.HaySiguiente()){
+				bolsaS.Definir(it.Siguiente().Significado(campo).valorString(),it.Siguiente().Significado(campo));
+				it.Avanzar();
+			}
+			aed2::Conj<String >::const_Iterador itS=bolsaS.DiccClaves().CrearIt();
+			while(itS.HaySiguiente()){
+				res.AgregarRapido(bolsaS.Significado(itS.Siguiente()));
+				itS.Avanzar();
+			}
 		}
-		Lista<Nat>::Iterador itN=bolsaN.DiccClaves().CrearIt();
-		while(itN.HaySiguiente()){
-			res.AgregarRapido(bolsaN.Significado(itN.Siguiente()));
-			itN.Avanzar();
-		}
-	}else{
-		DiccLex<Dato > bolsaS;
-		while(it.HaySiguiente()){
-			bolsaS.Definir(it.Siguiente().Significado(campo).valorString(),it.Siguiente().Significado(campo));
-			it.Avanzar();
-		}
-		aed2::Conj<String >::const_Iterador itS=bolsaS.DiccClaves().CrearIt();
-		while(itS.HaySiguiente()){
-			res.AgregarRapido(bolsaS.Significado(itS.Siguiente()));
-			itS.Avanzar();
-		}
+
 	}
 	return res;
 }
