@@ -1,5 +1,6 @@
 // compilar usando:
 //   g++ -o tests tests.cpp Driver.cpp <lista de archivos *.cpp propios>
+//valgrind --leak-check=full -v ./tests
 
 #include "Driver.h"
 #include "mini_test.h"
