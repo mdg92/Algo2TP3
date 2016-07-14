@@ -33,7 +33,7 @@ Tabla& Base::DameTabla(const NombreTabla t) const
 
 bool Base::HayJoin(const NombreTabla t1, const NombreTabla t2) const
 {
-	return this->Tablas.Significado(t1).Joins.Definido(t2) && this->Tablas.Significado(t2).Joins.Definido(t1);
+	return this->Tablas.Significado(t1).Joins.Definido(t2) && this->Tablas.Significado(t1).Joins.Significado(t2).EnUso;
 };
 
 NombreCampo Base::CampoJoin(const NombreTabla t1, const NombreTabla t2) const
@@ -68,6 +68,7 @@ void Base::InsertarEntrada(const Registro& r, const NombreTabla& t)
 			InfoJoin& InfoJ = InfoT.Joins.Significado(NomTab.Siguiente());
 			DatoCambio DatoC = DatoCambio(r, t, true);
 			InfoJ.Rcambios.AgregarAtras(DatoC);
+			this->Tablas.Significado(NomTab.Siguiente()).Joins.Significado(t).Rcambios.AgregarAtras(DatoC);
 			NomTab.Avanzar();
 
 		}
@@ -99,8 +100,9 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 			{
 				Conj<Conj<Registro>::const_Iterador> c = InfoT.TActual.buscarEnTabla(cr);
 				Registro reg = c.CrearIt().Siguiente().Siguiente();
-				DatoCambio DatoC = DatoCambio(reg, itNom.Siguiente(), false);
+				DatoCambio DatoC = DatoCambio(reg, t, false);
 				InfoJ.Rcambios.AgregarAtras(DatoC);
+				this->Tablas.Significado(itNom.Siguiente()).Joins.Significado(t).Rcambios.AgregarAtras(DatoC);
 			}else{
 
 				Conj<Conj<Registro>::const_Iterador> eje = InfoT.TActual.buscarEnTabla(cr);
@@ -110,6 +112,7 @@ void Base::Borrar(const Registro cr, const NombreTabla t)
 				{
 					DatoCambio DatoC(itReg.Siguiente().Siguiente(), t, false);
 					InfoJ.Rcambios.AgregarAtras(DatoC);
+					this->Tablas.Significado(itNom.Siguiente()).Joins.Significado(t).Rcambios.AgregarAtras(DatoC);
 					itReg.Avanzar();
 				}
 			}
@@ -141,9 +144,6 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 	Tabla Ta1 = this->Tablas.Significado(t1).TActual;
 	Tabla Ta2 = this->Tablas.Significado(t2).TActual;
-
-	//Nat n = Ta1.registros().Cardinal();
-	//Nat m = Ta2.registros().Cardinal();
 
 	Conj<Dato> cjd1 = Ta1.dameColumna(c, Ta1.registros());
 	Conj<Dato> cjd2 = Ta2.dameColumna(c, Ta2.registros());
@@ -229,18 +229,22 @@ void Base::GenerarVistaJoin(const NombreTabla t1, const NombreTabla t2, const No
 
 		}
 	}
-	InfoJoin InfoJ = InfoJoin(CampoJ, CampoT, JoinS, JoinN, JoinC);
-	this->Tablas.Significado(t1).Joins.Definir(t2, InfoJ);
-	this->Tablas.Significado(t2).Joins.Definir(t1, InfoJ);
+	InfoJoin InfoJ1 = InfoJoin(CampoJ, CampoT, JoinS, JoinN, JoinC, true);
+	InfoJoin InfoJ2 = InfoJoin(CampoJ, CampoT, JoinS, JoinN, JoinC, this->Tablas.Significado(t2).Joins.Definido(t1));
+	this->Tablas.Significado(t1).Joins.Definir(t2, InfoJ1);
+	this->Tablas.Significado(t2).Joins.Definir(t1, InfoJ2);
 
-	if(!this->Tablas.Significado(t1).Joins.Significado(t2).JoinC.EsVacio()){
-	std::cout << "Base::GenerarVistaJoin: "<< this->Tablas.Significado(t1).Joins.Significado(t2).JoinC.CrearIt().Siguiente().Campos() << std::endl;}
+
 };
 
 void Base::BorrarJoin(const NombreTabla t1, const NombreTabla t2)
 {
-	this->Tablas.Significado(t1).Joins.Borrar(t2);
-	this->Tablas.Significado(t2).Joins.Borrar(t1);
+	if(this->HayJoin(t2, t1)){
+		this->Tablas.Significado(t1).Joins.Significado(t2).EnUso = false;
+	}else{
+		this->Tablas.Significado(t1).Joins.Borrar(t2);
+		this->Tablas.Significado(t2).Joins.Borrar(t1);
+	}
 };
 
 const Conj<Registro>& Base::Registros(const NombreTabla t) const
@@ -257,17 +261,21 @@ Conj<Registro>& Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 	Tabla Ta2 = InfoT2.TActual;
 
 	InfoJoin& InfoJ = InfoT1.Joins.Significado(t2);
-
+	InfoJoin& InfoJ2 = InfoT2.Joins.Significado(t1);
 
 	NombreCampo c = InfoJ.CampoJ;
+
+
 
 
 		while(!InfoJ.Rcambios.EsVacia())
 		{
 			DatoCambio data = InfoJ.Rcambios.Primero();
-			std::cout << "Primero Rcambios: " << InfoJ.Rcambios.Primero().Reg.Significado("DNI").valorNat() << std::endl;
-			std::cout << "Primero Rcambios Accion: " << InfoJ.Rcambios.Primero().Accion << std::endl;
+			//std::cout << "Primero Rcambios: " << InfoJ.Rcambios.Primero().Reg.Significado("DNI").valorNat() << std::endl;
+			//std::cout << "Primero Rcambios Accion: " << InfoJ.Rcambios.Primero().Accion << std::endl;
+
 			InfoJ.Rcambios.Fin();
+			InfoJ2.Rcambios.Fin();
 			Registro r = data.Reg;
 
 			Nat keyN;
@@ -311,40 +319,39 @@ Conj<Registro>& Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 
 					if(InfoJ.CampoT)
 					{
-						Conj<Registro>::Iterador itnew = InfoJ.JoinC.AgregarRapido(RNuevo);
-						InfoJ.JoinN.Definir(keyN,itnew);
+
+						if(!InfoJ.JoinC.Pertenece(RNuevo)){
+							Conj<Registro>::Iterador itnew = InfoJ.JoinC.AgregarRapido(RNuevo);
+							InfoJ.JoinN.Definir(keyN,itnew);
+						}
+
 					}else{
-						Conj<Registro>::Iterador itnew = InfoJ.JoinC.AgregarRapido(RNuevo);
-						InfoJ.JoinS.Definir(keyS,itnew);
+
+						if(!InfoJ.JoinC.Pertenece(RNuevo)){
+							Conj<Registro>::Iterador itnew = InfoJ.JoinC.AgregarRapido(RNuevo);
+							InfoJ.JoinS.Definir(keyS,itnew);
+						}
 					}
 				}
 			}else{
 
 				if(InfoJ.CampoT)
 				{
-					//Conj<Registro>::Iterador itcjr = InfoJ.JoinN.Significado(keyN);
+
 					std::cout << "JoinC antes de Borrar: " << InfoJ.JoinC.Cardinal() << std::endl;
+					if(InfoJ.JoinN.Definido(keyN)){
 
-					InfoJ.JoinN.Significado(keyN).EliminarSiguiente();
-					InfoJ.JoinN.Borrar(keyN);
+						InfoJ.JoinN.Significado(keyN).EliminarSiguiente();
+						InfoJ.JoinN.Borrar(keyN);
 
+					}
 					std::cout << "JoinC despues de Borrar: " << InfoJ.JoinC.Cardinal() << std::endl;
 
-//					Conj<Registro>::Iterador itconj = InfoJ.JoinC.CrearIt();
-//					while(itconj.HaySiguiente()){
 //
-//						if(itconj.Siguiente().Significado(c)==keyN){
-//							itconj.EliminarSiguiente();
-//						}
-//
-//						if(itconj.HaySiguiente()){
-//							itconj.Avanzar();
-//						}
-//					}
 
 
 				}else{
-					//Conj<Registro>::Iterador itcjr = InfoJ.JoinS.Significado(keyS);
+
 
 					InfoJ.JoinS.Significado(keyS).EliminarSiguiente();
 					InfoJ.JoinS.Borrar(keyS);

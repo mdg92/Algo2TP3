@@ -76,11 +76,13 @@ class Base
 		DiccLex<Conj<Registro>::Iterador> JoinS;
 		DiccNat<Conj<Registro>::Iterador> JoinN;
 		Conj<Registro> JoinC;
+		bool EnUso;
 		InfoJoin(NombreCampo nc,
 				Tipo tc,
 				DiccLex<Conj<Registro>::Iterador> ds,
 				DiccNat<Conj<Registro>::Iterador> dn,
-				Conj<Registro> cr): Rcambios(Lista<struct DatoCambio>()), CampoJ(nc), CampoT(tc), JoinS(ds), JoinN(dn), JoinC(cr) {};
+				Conj<Registro> cr,
+				bool b): Rcambios(Lista<struct DatoCambio>()), CampoJ(nc), CampoT(tc), JoinS(ds), JoinN(dn), JoinC(cr), EnUso(b) {};
 	};
 	
 	struct InfoTabla{

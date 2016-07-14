@@ -459,7 +459,7 @@ aed2::Conj<Driver::Registro> Driver::vistaJoin(const NombreTabla& tabla1, const 
 
   	Conj<aed2::Registro>::Iterador c = this->base.VistaJoin(tabla1, tabla2).CrearIt();
 	Conj<Driver::Registro> res;
-	std::cout << "Driver::VistaJoin: " << this->base.VistaJoin(tabla1, tabla2).CrearIt().Siguiente().Campos() << std::endl;
+
 	while (c.HaySiguiente())
 	{
 		aed2::Registro reg = c.Siguiente();
