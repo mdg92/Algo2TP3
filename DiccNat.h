@@ -81,7 +81,7 @@ template<typename S>
 DiccNat<S>::DiccNat()
 {
 	this->primero=NULL;
-	this->claves=Lista<Nat>::Lista();
+	this->claves=Lista<Nat>();
 }
 
 template<typename S>

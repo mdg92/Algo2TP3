@@ -338,14 +338,14 @@ Conj<Registro>& Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 				if(InfoJ.CampoT)
 				{
 
-					std::cout << "JoinC antes de Borrar: " << InfoJ.JoinC.Cardinal() << std::endl;
+					//std::cout << "JoinC antes de Borrar: " << InfoJ.JoinC.Cardinal() << std::endl;
 					if(InfoJ.JoinN.Definido(keyN)){
 
 						InfoJ.JoinN.Significado(keyN).EliminarSiguiente();
 						InfoJ.JoinN.Borrar(keyN);
 
 					}
-					std::cout << "JoinC despues de Borrar: " << InfoJ.JoinC.Cardinal() << std::endl;
+					//std::cout << "JoinC despues de Borrar: " << InfoJ.JoinC.Cardinal() << std::endl;
 
 //
 
@@ -361,7 +361,7 @@ Conj<Registro>& Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 			}
 		}
 
-	std::cout << "Base::VistaJoin: " << InfoJ.JoinC.Cardinal() << std::endl;
+	//std::cout << "Base::VistaJoin: " << InfoJ.JoinC.Cardinal() << std::endl;
 	return InfoJ.JoinC;
 };
 

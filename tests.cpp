@@ -1,6 +1,5 @@
 // compilar usando:
 //   g++ -o tests tests.cpp Driver.cpp <lista de archivos *.cpp propios>
-//valgrind --leak-check=full -v ./tests
 
 #include "Driver.h"
 #include "mini_test.h"
@@ -540,38 +539,31 @@ void joins_no_son_simetricos()
 {
   aed2::Driver bd;
 
-  std::cout << "1 " << std::endl;
 
   CREAR_TABLA_PERSONAS( bd );
   CREAR_TABLA_TRABAJOS( bd );
 
-  std::cout << "2 " << std::endl;
 
   ASSERT( not bd.hayJoin(NOMBRE_TABLA_PERSONAS, NOMBRE_TABLA_TRABAJOS) );
   ASSERT( not bd.hayJoin(NOMBRE_TABLA_TRABAJOS, NOMBRE_TABLA_PERSONAS) );
 
-  std::cout << "3" << std::endl;
 
   bd.generarVistaJoin(NOMBRE_TABLA_PERSONAS, NOMBRE_TABLA_TRABAJOS, "DNI");
 
-  std::cout << "4" << std::endl;
 
   ASSERT( bd.hayJoin(NOMBRE_TABLA_PERSONAS, NOMBRE_TABLA_TRABAJOS) );
   ASSERT( not bd.hayJoin(NOMBRE_TABLA_TRABAJOS, NOMBRE_TABLA_PERSONAS) );
 
-  std::cout << "5" << std::endl;
 
   bd.generarVistaJoin(NOMBRE_TABLA_TRABAJOS, NOMBRE_TABLA_PERSONAS, "DNI");
   ASSERT( bd.hayJoin(NOMBRE_TABLA_PERSONAS, NOMBRE_TABLA_TRABAJOS) );
   ASSERT(bd.hayJoin(NOMBRE_TABLA_TRABAJOS, NOMBRE_TABLA_PERSONAS) );
 
-  std::cout << "6" << std::endl;
 
   bd.borrarVistaJoin(NOMBRE_TABLA_PERSONAS, NOMBRE_TABLA_TRABAJOS);
   ASSERT(not bd.hayJoin(NOMBRE_TABLA_PERSONAS, NOMBRE_TABLA_TRABAJOS) );
   ASSERT(bd.hayJoin(NOMBRE_TABLA_TRABAJOS, NOMBRE_TABLA_PERSONAS) );
 
-  std::cout << "7" << std::endl;
 
 }
 
