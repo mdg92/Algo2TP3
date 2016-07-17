@@ -44,11 +44,11 @@ class DiccLex
   	};
   	Nodo* _raiz;
   	Conj<String> _claves;
-   void borrec (Nodo*);
+    void borrec (Nodo*);
 
 
 };
-
+	
 template<typename S>
 DiccLex<S>::DiccLex(){
 	this->_raiz=NULL;
@@ -61,12 +61,13 @@ void DiccLex<S>::borrec (Nodo* n){
 		if(n->continuaciones[i]!=NULL) borrec(n->continuaciones[i]);
 		i++;
 	}
+	if (n->dato!=NULL) delete n->dato;
 	delete n;
 };
 template<typename S>
 DiccLex<S>::~DiccLex(){
-	//Nodo* root=this->_raiz;
-	//if (root!=NULL) borrec(root);
+	Nodo* root=this->_raiz;
+	if (root!=NULL) borrec(root);
 };
 
 

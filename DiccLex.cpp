@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace aed2;
 
-/*
+
 int main(){
 	DiccLex<Nat> p;
 	Nat i=2;
@@ -19,4 +19,4 @@ int main(){
 
 
 };
-*/
+
