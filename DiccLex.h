@@ -147,6 +147,8 @@ void DiccLex<S>::Borrar(String s){
 		i++;
 	}
 	aux->esSig=false;
+	delete aux->dato;
+	aux->dato=NULL;
 	i--;
 	int j=0;
 	while(aux->continuaciones[j]==NULL&&j<256) j++;
