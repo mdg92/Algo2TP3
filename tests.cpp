@@ -585,27 +585,27 @@ int main(int argc, char **argv)
 
   RUN_TEST( insertar_una_tabla_vacia );
 
-  RUN_TEST( insertar_registros_en_una_tabla );
-  RUN_TEST( borrar_un_campo_clave_en_una_tabla );
-  // RUN_TEST( borrar_un_campo_no_clave_en_una_tabla );
-  RUN_TEST( contar_cantidad_de_accesos );
-  RUN_TEST(tabla_maxima);
-  RUN_TEST(indice_sobre_campo_clave_nat);
-  RUN_TEST(indice_sobre_campo_clave_string);
-  RUN_TEST(minimo_de_tabla);
-  RUN_TEST(maximo_de_tabla);
+//  RUN_TEST( insertar_registros_en_una_tabla );
+//  RUN_TEST( borrar_un_campo_clave_en_una_tabla );
+  //RUN_TEST( borrar_un_campo_no_clave_en_una_tabla );
+//  RUN_TEST( contar_cantidad_de_accesos );
+//  RUN_TEST(tabla_maxima);
+//  RUN_TEST(indice_sobre_campo_clave_nat);
+//  RUN_TEST(indice_sobre_campo_clave_string);
+//  RUN_TEST(minimo_de_tabla);
+//  RUN_TEST(maximo_de_tabla);
 
-  RUN_TEST(buscar_registro_perteneciente_a_tabla);
-  RUN_TEST(buscar_registro_no_perteneciente_a_tabla);
+//  RUN_TEST(buscar_registro_perteneciente_a_tabla);
+//  RUN_TEST(buscar_registro_no_perteneciente_a_tabla);
 
-  //////////////////////////////////////////////////////////////////////////////
-  // BD
-  //////////////////////////////////////////////////////////////////////////////
+//  //////////////////////////////////////////////////////////////////////////////
+//  // BD
+//  //////////////////////////////////////////////////////////////////////////////
 
-  RUN_TEST( hacer_un_join );
-  RUN_TEST( actualizar_join_despues_de_insertar );
+//  RUN_TEST( hacer_un_join );
+  //RUN_TEST( actualizar_join_despues_de_insertar );
   RUN_TEST( actualizar_join_despues_de_borrar );
-  RUN_TEST( joins_no_son_simetricos );
+//  RUN_TEST( joins_no_son_simetricos );
 
   return 0;
 

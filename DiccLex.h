@@ -14,7 +14,8 @@ template<typename S>
 class DiccLex
 {
   public:
-  	DiccLex();
+    DiccLex();
+    DiccLex(const DiccLex &);
   	~DiccLex();
   	//DiccLex(const DiccLex<S>&);
   	void Definir(String, const S&);
@@ -37,6 +38,7 @@ class DiccLex
   private:
 
   	struct Nodo{
+        Nodo() : dato(NULL), esSig(false) { for(int i=0; i<256;++i) continuaciones[i]=NULL;}
   		S* dato;
   		bool esSig;
   		Conj<String>::Iterador claveEnConj;
@@ -54,6 +56,18 @@ DiccLex<S>::DiccLex(){
 	this->_raiz=NULL;
 	this->_claves=Conj<String>();
 };
+
+template<typename S>
+DiccLex<S>::DiccLex(const DiccLex &otro){
+    this->_raiz=NULL;
+    Conj<String>::const_Iterador itcl=otro._claves.CrearIt();
+    while(itcl.HaySiguiente()){
+        this->Definir(itcl.Siguiente(), otro.Significado(itcl.Siguiente()));
+        itcl.Avanzar();
+    }
+};
+
+
 template<typename S>
 void DiccLex<S>::borrec (Nodo* n){
 	int i=0;
@@ -66,8 +80,9 @@ void DiccLex<S>::borrec (Nodo* n){
 };
 template<typename S>
 DiccLex<S>::~DiccLex(){
-	Nodo* root=this->_raiz;
-	if (root!=NULL) borrec(root);
+    //Nodo* root=this->_raiz;
+    //if (root!=NULL) borrec(root);
+
 };
 
 
@@ -76,7 +91,7 @@ void DiccLex<S>::Definir(const String s, const S& d){
 
 	Nodo** aux=&this->_raiz;
 	int i = 0;
-	int sl = s.length();
+    int sl = s.length() ;
 	while(i<(sl)){
 		if(*aux==NULL){
 			(*aux)= new Nodo;
@@ -99,8 +114,13 @@ void DiccLex<S>::Definir(const String s, const S& d){
 			j++;
 		}
 	}
-	if((*aux)->esSig!=true) (*aux)->claveEnConj=(this->_claves).AgregarRapido(s);
-	(*aux)->esSig=true;
+    if((*aux)->esSig!=true){
+        (*aux)->claveEnConj=(this->_claves).AgregarRapido(s);
+
+    }else{
+        delete (*aux)->dato;
+    }
+    (*aux)->esSig=true;
 	(*aux)->dato= new S(d);
 	//std::cout << s << " Definido" << std::endl;
 
@@ -141,7 +161,7 @@ void DiccLex<S>::Borrar(String s){
 	int i =0;
 	Lista<Nodo*> l;
 	int sl = s.length();
-	while(i<sl){
+    while(i<(sl +1)){
 		l.AgregarAdelante(aux);
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
@@ -185,10 +205,10 @@ S& DiccLex<S>::Significado(String s) const{
 	Nodo* aux=this->_raiz;
 	int i =0;
 	int sl = s.length();
-	while (i<sl){
+    while (i<(sl)){
 		aux=aux->continuaciones[(unsigned char)(s[i])];
 		i++;
-	}
+    }
 	return *(aux->dato);
 
 };

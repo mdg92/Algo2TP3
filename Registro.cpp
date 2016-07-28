@@ -74,15 +74,15 @@ bool Registro::BorrarPreg( Registro r2){
 	return res;
 };
 
-bool Registro::CoincideAlguno(const Conj<NombreCampo> cc,  Registro r2) const{
+bool Registro::CoincideAlguno(const Conj<NombreCampo>& cc, const Registro& r2) const{
 	Conj<NombreCampo>::const_Iterador it =cc.CrearIt();
 	bool res=false;
 	while(!res && it.HaySiguiente()) res=(this->Significado(it.Siguiente())==r2.Significado(it.Siguiente())), it.Avanzar();
 	return res;
 };
 
-bool Registro::CoincidenTodos(Conj<NombreCampo> cc,  Registro r2) const{
-	Conj<NombreCampo>::Iterador it =cc.CrearIt();
+bool Registro::CoincidenTodos(const Conj<NombreCampo>& cc,  const Registro& r2) const{
+    Conj<NombreCampo>::const_Iterador it =cc.CrearIt();
 	bool res=true;
 	while(res && it.HaySiguiente()){
 		res=this->Significado(it.Siguiente())==r2.Significado(it.Siguiente());

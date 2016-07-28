@@ -157,6 +157,24 @@ class Dicc
         typename Dicc<K,S>::const_Elem& operator = (const Dicc<K,S>::const_Elem&);
     };
 
+    bool operator==(const Dicc<K,S>&otro) {
+        if (claves_.Longitud() != otro.claves_.Longitud()) return false;
+
+        typename Lista<K>::const_Iterador it = claves_.CrearIt();
+        while (it.HaySiguiente()) {
+            if (!otro.Definido(it.Siguiente())) return false;
+            if (otro.Significado(it.Siguiente()) != Significado(it.Siguiente())) return false;
+        }
+
+        it = otro.claves_.CrearIt();
+        while (it.HaySiguiente()) {
+            if (!Definido(it.Siguiente())) return false;
+            if (otro.Significado(it.Siguiente()) != Significado(it.Siguiente())) return false;
+        }
+
+        return true;
+    }
+
   private:
 
     Lista<K> claves_;

@@ -32,8 +32,8 @@ class Registro
   	bool BorrarPreg(Registro);
   	bool BorrarPreg(Registro) const;
   	bool EnTodos(NombreCampo, Conj<Registro>);
-  	bool CoincideAlguno(const Conj<NombreCampo>, const  Registro)const;
-  	bool CoincidenTodos(Conj<NombreCampo>,  Registro) const;
+    bool CoincideAlguno(const Conj<NombreCampo>&, const Registro&)const;
+    bool CoincidenTodos(const Conj<NombreCampo>&,  const Registro&) const;
   	Registro UnirRegistros(NombreCampo,  Registro);
   	Registro CombinarTodos(NombreCampo, Conj<Registro>);
   	bool operator==(const Registro)const;

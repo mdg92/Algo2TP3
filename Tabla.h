@@ -37,9 +37,6 @@ class Tabla
     Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Registro& columnas);
     //Tabla(const NombreTabla& nombre, const aed2::Conj<NombreCampo >& claves, const Conj<Columna>& columnas);
 
-
-    //Tabla(const Tabla& t);
-
     ~Tabla();
 
    void agregarRegistro(const Registro&);
@@ -69,7 +66,8 @@ class Tabla
     Conj<Conj<Registro>::const_Iterador> buscarEnTabla(const Registro)const;
 
   private:
-	NombreTabla Nombre_;
+    //Tabla(const Tabla& t);
+    NombreTabla Nombre_;
 	Conj<Registro> Registros_;
 	DiccLex<Tipo> Campos_;//String
 	Conj<NombreCampo > Claves_;

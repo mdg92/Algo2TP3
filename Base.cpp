@@ -255,10 +255,10 @@ const Conj<Registro>& Base::Registros(const NombreTabla t) const
 Conj<Registro>& Base::VistaJoin(const NombreTabla t1, const NombreTabla t2)
 {
 	InfoTabla& InfoT1 = this->Tablas.Significado(t1);
-	Tabla Ta1 = InfoT1.TActual;
+    Tabla & Ta1 = InfoT1.TActual;
 
 	InfoTabla& InfoT2 = this->Tablas.Significado(t2);
-	Tabla Ta2 = InfoT2.TActual;
+    Tabla & Ta2 = InfoT2.TActual;
 
 	InfoJoin& InfoJ = InfoT1.Joins.Significado(t2);
 	InfoJoin& InfoJ2 = InfoT2.Joins.Significado(t1);

@@ -88,7 +88,7 @@ void Driver::crearTabla(const NombreTabla& nombre, const aed2::Conj<Columna>& co
 	aed2::Dato d2("a");
 
 	while(itcol.HaySiguiente()){
-		if(itcol.Siguiente().tipo==0){
+        if(itcol.Siguiente().tipo==0){
 			reg.Definir(itcol.Siguiente().nombre,d1);
 		}else{
 			reg.Definir(itcol.Siguiente().nombre,d2);
