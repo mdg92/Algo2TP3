@@ -60,13 +60,13 @@ void Base::InsertarEntrada(const Registro& r, const NombreTabla& t)
 
 	if(!InfoT.Joins.DiccClaves().EsVacio())
 	{
-
+		Registro r2=r;
 		Conj<NombreTabla>::const_Iterador NomTab = InfoT.Joins.DiccClaves().CrearIt();
 
 		while(NomTab.HaySiguiente()){
 
 			InfoJoin& InfoJ = InfoT.Joins.Significado(NomTab.Siguiente());
-			DatoCambio DatoC = DatoCambio(r, t, true);
+			DatoCambio DatoC = DatoCambio(r2, t, true);
 			InfoJ.Rcambios.AgregarAtras(DatoC);
 			this->Tablas.Significado(NomTab.Siguiente()).Joins.Significado(t).Rcambios.AgregarAtras(DatoC);
 			NomTab.Avanzar();

@@ -80,8 +80,8 @@ void DiccLex<S>::borrec (Nodo* n){
 };
 template<typename S>
 DiccLex<S>::~DiccLex(){
-    //Nodo* root=this->_raiz;
-    //if (root!=NULL) borrec(root);
+    Nodo* root=this->_raiz;
+    if (root!=NULL) borrec(root);
 
 };
 

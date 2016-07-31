@@ -16,6 +16,13 @@ class Registro
 {
   public:
 	Registro();
+	Registro& operator = (const Registro& otro){
+		Conj<String>::const_Iterador claves= otro.Campos().CrearIt();
+		while(claves.HaySiguiente()){
+			this->Definir(claves.Siguiente(),otro.Significado(claves.Siguiente()));
+			claves.Avanzar();
+		}
+	};
   	//DiccLex();
   	//~DiccLex();
   	//DiccLex(const Registro&);
